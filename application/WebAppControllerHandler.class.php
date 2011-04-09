@@ -40,16 +40,7 @@ class WebAppControllerHandler implements InterceptingChainHandler {
 		}
 
 		if (!$modelAndView->getView() instanceof RedirectView) {
-			$modelAndView->getModel()->
-				set('baseUrl', $chain->getPathWeb())->
-				set('controllerName', $controllerName)->
-				set('serviceLocator', $chain->getServiceLocator());
-
-			// не перезаписывать
-			if (!$modelAndView->getModel()->has('selfUrl')) {
-				$modelAndView->getModel()->
-					set('selfUrl', $chain->getPathWeb().'?area='.$controllerName);
-			}
+			$this->prepairNonRedirectModel($chain, $controllerName, $modelAndView->getModel());
 		}
 
 		$chain->setMav($modelAndView);
@@ -58,7 +49,22 @@ class WebAppControllerHandler implements InterceptingChainHandler {
 
 		return $this;
 	}
-	
+
+	/**
+	 * @param InterceptingChain $chain
+	 * @param string $controllerName
+	 * @param Model $model
+	 * @return WebAppControllerHandler
+	 */
+	protected function prepairNonRedirectModel(InterceptingChain $chain, $controllerName, Model $model) {
+		return $this;
+	}
+
+	/**
+	 * @param InterceptingChain $chain
+	 * @param Controller $controller
+	 * @return WebAppControllerHandler
+	 */
 	protected function prepairController(InterceptingChain $chain, Controller $controller)
 	{
 		return $this;
