@@ -19,9 +19,9 @@ abstract class BaseController implements Controller, IServiceLocatorSupport
 	 * @var HeadHelper
 	**/
 	protected $meta	= null;
-	
+
 	/**
-	 * @var ServiceLocator 
+	 * @var ServiceLocator
 	 */
 	protected $serviceLocator = null;
 
@@ -31,12 +31,12 @@ abstract class BaseController implements Controller, IServiceLocatorSupport
 		$this->setupMeta();
 	}
 
-	public function setServiceLocator(ServiceLocator $serviceLocator)
+	public function setServiceLocator(IServiceLocator $serviceLocator)
 	{
 		$this->serviceLocator = $serviceLocator;
 		return $this;
 	}
-	
+
 	/**
 	 * @return ServiceLocator
 	 */

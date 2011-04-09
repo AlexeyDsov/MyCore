@@ -38,7 +38,7 @@
 			if (!empty($_SESSION)) {
 				$request->setSession($_SESSION);
 			}
-			
+
 			$this->setRequest($request);
 
 			return $this;
@@ -136,7 +136,7 @@
 		/**
 		 * @return ServiceLocator
 		 */
-		public function setServiceLocator(ServiceLocator $serviceLocator)
+		public function setServiceLocator(IServiceLocator $serviceLocator)
 		{
 			return $this->setVar(self::OBJ_SERVICE_LOCATOR, $serviceLocator);
 		}
