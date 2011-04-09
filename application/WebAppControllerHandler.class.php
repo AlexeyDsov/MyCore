@@ -19,12 +19,11 @@ class WebAppControllerHandler implements InterceptingChainHandler {
 	 */
 	public function run(InterceptingChain $chain)
 	{
-		$controllerName = $chain->getControllerName();
+		$controllerName = $this->getControllerName($chain);
 
 		Assert::isNotEmpty($controllerName);
 
-		$serviceLocator = $chain->getServiceLocator();
-		$controller = $serviceLocator->spawn($controllerName);
+		$controller = $chain->getServiceLocator()->spawn($controllerName);
 		$this->prepairController($chain, $controller);
 
 		$modelAndView = $controller->handleRequest($chain->getRequest());
@@ -48,6 +47,14 @@ class WebAppControllerHandler implements InterceptingChainHandler {
 		$chain->next();
 
 		return $this;
+	}
+
+	/**
+	 * @param InterceptingChain $chain
+	 * @return string
+	 */
+	protected function getControllerName(InterceptingChain $chain) {
+		return $chain->getControllerName();
 	}
 
 	/**
