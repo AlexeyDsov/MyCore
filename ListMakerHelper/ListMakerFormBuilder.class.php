@@ -132,6 +132,8 @@
 						case ListMakerProperties::OPTION_FILTERABLE_IS_NOT_FALSE:
 							$prmitiveList[] = $this->makePrimitiveTernaryLogic($filterName);
 							break;
+						case ListMakerProperties::OPTION_FILTERABLE_IN:
+							$prmitiveList[] = $this->makePrimitiveIn($filterName, $propertyType);
 						default:
 							throw new UnimplementedFeatureException('Unkown filter name: '.$filterName);
 					}
@@ -184,6 +186,31 @@
 
 		protected function makePrimitiveTernaryLogic($filterName) {
 			return Primitive::boolean($filterName);
+		}
+
+		protected function makePrimitiveIn($filterName, $propertyType) {
+			switch ($propertyType) {
+				case 'identifier':
+				case 'identifierList':
+				case 'integerIdentifier':
+				case 'enumeration':
+				case 'integer':
+					$primitive = new PrimitiveArray($filterName);
+					$filter = Filter::pcre()->setExpression('~[^\d]~iu', '');
+					return $primitive->setImportFilter($filter);
+				case 'timestamp':
+				case 'date':
+				case 'string':
+				case 'scalarIdentifier':
+					return new PrimitiveArray($filterName);
+				case 'boolean':
+					$errorMsg = "Для propertyType 'boolean' операции IN невозможны";
+					throw new UnimplementedFeatureException($errorMsg);
+				default:
+					$errorMsg = "С данным типом LightMetaProperty не описана работа IN: {$propertyType}";
+					throw new UnimplementedFeatureException($errorMsg);
+			}
+			Assert::isUnreachable();
 		}
 	}
 ?>

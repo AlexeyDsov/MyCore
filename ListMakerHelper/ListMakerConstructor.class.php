@@ -215,6 +215,10 @@
 							$criteria->add($this->makeExpressionBinary($objectLink, $filterName, $value));
 						} elseif (isset($this->postfixExpressionMapping[$filterName])) {
 							$criteria->add($this->makeExpressionTernary($objectLink, $filterName));
+						} elseif ($filterName == ListMakerProperties::OPTION_FILTERABLE_IN) {
+							if ($inExpression = $this->makeExpressionIn($objectLink, $value)) {
+								$criteria->add($inExpression);
+							}
 						} else {
 							throw new UnimplementedFeatureException('Unkown filterName: '.$filterName);
 						}
@@ -250,6 +254,27 @@
 			}
 			$logic = $this->postfixExpressionMapping[$filterName];
 			return new PostfixUnaryExpression($objectLink, $logic);
+		}
+
+		/**
+		 * @param string $objectLink
+		 * @param string $filterName
+		 * @param string $value
+		 * @return LogicalObject
+		 */
+		protected function makeExpressionIn($objectLink, $value) {
+			Assert::isArray($value);
+			$inArray = array();
+			foreach ($value as $element) {
+				if (!empty($element)) {
+					$inArray[] = $element;
+				}
+			}
+
+			if (!empty($inArray)) {
+				return Expression::in($objectLink, $inArray);
+			}
+			return null;
 		}
 	}
 ?>
