@@ -1,4 +1,14 @@
 <?php
+/***************************************************************************
+ *   Copyright (C) 2009 by Solomatin Alexandr                              *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU Lesser General Public License as        *
+ *   published by the Free Software Foundation; either version 3 of the    *
+ *   License, or (at your option) any later version.                       *
+ *                                                                         *
+ ***************************************************************************/
+
 class WebAppSessionHandler implements InterceptingChainHandler
 {
 	protected $sessionName		= null;
@@ -47,7 +57,7 @@ class WebAppSessionHandler implements InterceptingChainHandler
 			 * Not start session if user disable cookies or if it's a bot
 			**/
 		}
-		
+
 		$serviceLocator = $chain->getServiceLocator();
 		$serviceLocator->set('session', $session);
 
@@ -85,10 +95,10 @@ class WebAppSessionHandler implements InterceptingChainHandler
 
 		return $this;
 	}
-	
+
 	/**
 	 * @param int $cookieTime
-	 * @return WebAppSessionHandler 
+	 * @return WebAppSessionHandler
 	 */
 	public function setCookieTime($cookieTime)
 	{

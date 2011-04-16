@@ -2,8 +2,12 @@
 /***************************************************************************
  *   Copyright (C) 2009 by Solomatin Alexandr                              *
  *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU Lesser General Public License as        *
+ *   published by the Free Software Foundation; either version 3 of the    *
+ *   License, or (at your option) any later version.                       *
+ *                                                                         *
  ***************************************************************************/
-/* $Id: WebAppViewHandler.class.php 283 2009-12-01 07:51:46Z lom $ */
 
 	class WebAppViewHandler implements InterceptingChainHandler
 	{
@@ -22,7 +26,7 @@
 		{
 			$view	= $chain->getMav()->getView();
 			$model 	= $chain->getMav()->getModel();
-		
+
 			if (!$view instanceof View) {
 				$viewName = $view;
 				$viewResolver = MultiPrefixPhpViewResolver::create()->

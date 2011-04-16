@@ -1,9 +1,13 @@
 <?php
 /***************************************************************************
 *   Copyright (C) 2008 by Sergey S. Sergeev                                *
-*                                                                          *
-***************************************************************************/
-/* $Id: HeadHelper.class.php 101 2009-10-20 16:32:51Z stalkerxey $ */
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU Lesser General Public License as        *
+ *   published by the Free Software Foundation; either version 3 of the    *
+ *   License, or (at your option) any later version.                       *
+ *                                                                         *
+ ***************************************************************************/
 
 	class HeadHelper implements Stringable
 	{
@@ -161,7 +165,7 @@
 		                '@(&|&amp;)(rsquo|#8217);@isu',
 		                '@(&|&amp;)(ldquo|#8220);@isu',
 		                '@(&|&amp;)(rdquo|#8221);@isu',
-		                '@(&|&amp;)?(sbquo);@isu',		                
+		                '@(&|&amp;)?(sbquo);@isu',
 		                '@(&|&amp;)#(\d+);@isu',
 		                '@#(\d+);@isu',
 		                '@(&|&amp;)?(mdash);@isu',
@@ -183,7 +187,7 @@
 		                '',
 		                '',
 		                '',
-		                '',		                
+		                '',
 		                '-',
 		                '–',
 	       			)

@@ -1,9 +1,15 @@
 <?php
 /***************************************************************************
- *   Copyright (C) 2009 by Alexey Denisov                                  *
+ *   Copyright (C) 2011 by Sergey Sergeev, Alexandr Solomatin,             *
+ *   Alexey Denisov                                                        *
+ *   alexeydsov@gmail.com                                                  *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU Lesser General Public License as        *
+ *   published by the Free Software Foundation; either version 3 of the    *
+ *   License, or (at your option) any later version.                       *
  *                                                                         *
  ***************************************************************************/
-/* $Id: FrontOfficeController.class.php 1532 2010-01-28 11:41:43Z zigorro $ */
 
 abstract class BaseController implements Controller, IServiceLocatorSupport
 {

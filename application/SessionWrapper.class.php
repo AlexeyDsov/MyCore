@@ -1,4 +1,14 @@
-<?php	
+<?php
+/***************************************************************************
+ *   Copyright (C) 2011 by Alexey Denisov                                  *
+ *   alexeydsov@gmail.com                                                  *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU Lesser General Public License as        *
+ *   published by the Free Software Foundation; either version 3 of the    *
+ *   License, or (at your option) any later version.                       *
+ *                                                                         *
+ ***************************************************************************/
 
 	/**
 	 * @see Session
@@ -13,14 +23,14 @@
 				);
 		}
 	}
-	
+
 	/**
 	 * Dynamic wrapper around session_*() functions.
 	**/
 	final class SessionWrapper extends Singleton
 	{
 		private $isStarted = false;
-		
+
 		/**
 		 * @return SessionWrapper
 		 */
@@ -28,13 +38,13 @@
 		{
 			return self::getInstance(__CLASS__);
 		}
-		
+
 		public function start()
 		{
 			session_start();
 			$this->isStarted = true;
 		}
-		
+
 		/**
 		 * @throws SessionWrapperNotStartedException
 		**/
@@ -42,23 +52,23 @@
 		{
 			if (!$this->isStarted)
 				throw new SessionWrapperNotStartedException();
-			
+
 			$this->isStarted = false;
-			
+
 			try {
 				session_destroy();
 			} catch (BaseException $e) {
 				// stfu
 			}
-			
+
 			setcookie(session_name(), null, 0, '/');
 		}
-		
+
 		public function flush()
 		{
 			return session_unset();
 		}
-		
+
 		/**
 		 * @throws SessionWrapperNotStartedException
 		**/
@@ -66,10 +76,10 @@
 		{
 			if (!self::isStarted())
 				throw new SessionWrapperNotStartedException();
-			
+
 			$_SESSION[$var] = $val;
 		}
-		
+
 		/**
 		 * @throws WrongArgumentException
 		 * @throws SessionWrapperNotStartedException
@@ -78,18 +88,18 @@
 		{
 			if (!self::isStarted())
 				throw new SessionWrapperNotStartedException();
-			
+
 			if (!func_num_args())
 				throw new WrongArgumentException('missing argument(s)');
-			
+
 			foreach (func_get_args() as $arg) {
 				if (!isset($_SESSION[$arg]))
 					return false;
 			}
-			
+
 			return true;
 		}
-		
+
 		/**
 		 * @throws SessionWrapperNotStartedException
 		**/
@@ -97,15 +107,15 @@
 		{
 			if (!self::isStarted())
 				throw new SessionWrapperNotStartedException();
-			
+
 			return isset($_SESSION[$var]) ? $_SESSION[$var] : null;
 		}
-		
+
 		public function &getAll()
 		{
 			return $_SESSION;
 		}
-		
+
 		/**
 		 * @throws WrongArgumentException
 		 * @throws SessionWrapperNotStartedException
@@ -114,14 +124,14 @@
 		{
 			if (!self::isStarted())
 				throw new SessionWrapperNotStartedException();
-			
+
 			if (!func_num_args())
 				throw new WrongArgumentException('missing argument(s)');
-			
+
 			foreach (func_get_args() as $arg)
 				unset($_SESSION[$arg]);
 		}
-		
+
 		/**
 		 * @throws SessionWrapperNotStartedException
 		**/
@@ -129,33 +139,33 @@
 		{
 			if (!self::isStarted())
 				throw new SessionWrapperNotStartedException();
-			
+
 			if ($_SESSION) {
 				foreach (array_keys($_SESSION) as $key) {
 					self::drop($key);
 				}
 			}
 		}
-		
+
 		public function isStarted()
 		{
 			return $this->isStarted;
 		}
-		
+
 		/**
 		 * assigns to $_SESSION scope variables defined in given array
 		**/
 		/* void */ public function arrayAssign($scope, $array)
 		{
 			Assert::isArray($array);
-			
+
 			foreach ($array as $var) {
 				if (isset($scope[$var])) {
 					$_SESSION[$var] = $scope[$var];
 				}
 			}
 		}
-		
+
 		/**
 		 * @throws SessionWrapperNotStartedException
 		**/
@@ -163,10 +173,10 @@
 		{
 			if (!self::isStarted())
 				throw new SessionWrapperNotStartedException();
-			
+
 			return session_name();
 		}
-		
+
 		/**
 		 * @throws SessionWrapperNotStartedException
 		**/
@@ -174,7 +184,7 @@
 		{
 			if (!self::isStarted())
 				throw new SessionWrapperNotStartedException();
-			
+
 			return session_id();
 		}
 	}
