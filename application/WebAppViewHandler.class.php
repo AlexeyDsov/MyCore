@@ -29,15 +29,13 @@
 
 			if (!$view instanceof View) {
 				$viewName = $view;
-				$viewResolver = MultiPrefixPhpViewResolver::create()->
-					setViewClassName('SimplePhpView')->
-					addPrefix(
-						$chain->getPathTemplate()
-					);
-
+				$viewResolver = $this->getViewResolver($chain, $model);
 				$view = $viewResolver->resolveViewName($viewName);
 			}
 
+			if ($chain->getMav()->viewIsNormal()) {
+				$this->updateNonRedirectModel($chain, $model);
+			}
 			$view->render($model);
 
 			$chain->next();
@@ -45,6 +43,21 @@
 			return $this;
 		}
 
-	}
+		/**
+		 * @param InterceptingChain $chain
+		 * @param Model $model
+		 * @return ViewResolver
+		 */
+		protected function getViewResolver(InterceptingChain $chain, Model $model) {
+			return PhpViewResolver::create($chain->getPathTemplateDefault(), EXT_TPL);
+		}
 
+		/**
+		 * @param Model $model
+		 * @return WebAppViewHandler
+		 */
+		protected function updateNonRedirectModel(InterceptingChain $chain, Model $model) {
+			return $this;
+		}
+	}
 ?>

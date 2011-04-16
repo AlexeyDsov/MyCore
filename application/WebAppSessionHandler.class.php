@@ -14,7 +14,7 @@
 		protected $sessionName		= null;
 		protected $cookiePath		= '/';
 		protected $cookieDomain		= null;
-		protected $cookieTime		= 1800;
+		protected $cookieTime		= 0;
 
 		/**
 		 * @return WebAppSessionHandler
@@ -30,10 +30,15 @@
 		public function run(InterceptingChain $chain)
 		{
 			Assert::isNotEmpty($this->sessionName, 'sessionName must not be empty');
-			Assert::isNotEmpty($this->cookieDomain, 'cookie domain must not be empty');
 
 			$sessionName = session_name($this->sessionName);
-			session_set_cookie_params($this->cookieTime, $this->cookiePath, '.'.$this->cookieDomain);
+			session_set_cookie_params(
+				$this->cookieTime,
+				$this->cookiePath,
+				($this->cookieDomain !== null)
+					? ('.'.$this->cookieDomain)
+					: null
+			);
 
 			if (
 				array_key_exists($sessionName, $_REQUEST)
@@ -58,8 +63,7 @@
 				**/
 			}
 
-			$serviceLocator = $chain->getServiceLocator();
-			$serviceLocator->set('session', $session);
+			$chain->getServiceLocator()->set('session', $session);
 
 			$chain->next();
 

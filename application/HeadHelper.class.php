@@ -18,6 +18,7 @@
 		protected $rss			= array(); // массив двухмерных массивов - title и href тэга рсс файла <link rel="alternate" type="application/rss+xml" title="" href="" />
 		protected $properties	= array(); //
 		protected $prefix		= "\t";
+		protected $metaList = array();
 
 		/**
 		 * @return HeadHelper
@@ -123,17 +124,43 @@
 			return $this->rss;
 		}
 
+		/**
+		 * @return HeadHelper
+		 */
+		public function addMetaHttpEquiv($httpEquiv, $content) {
+			$this->metaList[] = array('http-equiv' => $httpEquiv, 'content' => $content);
+			return $this;
+		}
+
+		/**
+		 * @return HeadHelper
+		 */
+		public function addMetaName($name, $content) {
+			$this->metaList[] = array('name' => $name, 'content' => $content);
+			return $this;
+		}
+
 		public function toString()
 		{
 			$string = "{$this->prefix}<title>{$this->getTitle()}</title>\n";
 
-			if ($this->getDescription())
+			if ($this->getDescription()) {
 				$string .= "{$this->prefix}<meta name=\"description\" content=\"{$this->getDescription()}\" />\n";
+			}
 
-			if ($this->isIndex())
+			if ($this->isIndex()) {
 				$string .= "{$this->prefix}<meta name=\"robots\" content=\"all\" />\n";
-			else
+			} else {
 				$string .= "{$this->prefix}<meta name=\"robots\" content=\"noindex,nofollow\" />\n";
+			}
+
+			foreach ($this->metaList as $metaData) {
+				$metaParams = '';
+				foreach ($metaData as $metaParam => $metaValue) {
+					$metaParams .= $metaParam.'="'.Filter::htmlSpecialChars()->apply($metaValue).'"';
+				}
+				$string .= "$this->prefix<meta {$metaParams} />\n";
+			}
 
 			if ($list = $this->getRss()) {
 				foreach ($list as $rss) {

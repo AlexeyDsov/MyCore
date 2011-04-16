@@ -11,9 +11,11 @@
 
 	class WebAppControllerResolverHandler implements InterceptingChainHandler
 	{
+		const CONTROLLER_POSTFIX = 'Controller';
+
 		protected $defaultController = 'MainController';
 
-		protected $notfoundController = 'ErrorController';
+		protected $notfoundController = 'NotFoundController';
 
 		/**
 		 * @return WebAppControllerResolverHandler
@@ -26,33 +28,16 @@
 		/**
 		 * @return WebAppControllerResolverHandler
 		 */
-		public function run(InterceptingChain $chain)
-		{
-			$controllerName = $this->defaultController;
+		public function run(InterceptingChain $chain) {
+			$request = $chain->getRequest();
 
-			$area = null;
-			if ($chain->getRequest()->hasAttachedVar('area')) {
-				$area = $chain->getRequest()->getAttachedVar('area');
+			if ($controllerName = $this->getControllerNameByArea($chain)) {
+				$chain->setControllerName($controllerName);
+			} elseif ($controllerName = $this->getControllerNameByOtherData($chain)) {
+				$chain->setControllerName($controllerName);
+			} else {
+				$chain->setControllerName($this->defaultController);
 			}
-
-			if ($chain->getRequest()->hasGetVar('area')) {
-				$area = $chain->getRequest()->getGetVar('area');
-			}
-
-			if (
-				$area
-				&& $this->checkControllerName($area.'Controller', $chain->getPathController())
-			) {
-				$controllerName = $area.'Controller';
-			} elseif ($area) {
-				$controllerName = $this->notfoundController;
-				// таким образом, запросили модуль, которого нет на нашем сайте
-				HeaderUtils::sendHttpStatus(
-					new HttpStatus(HttpStatus::CODE_404)
-				);
-			}
-
-			$chain->setControllerName($controllerName);
 
 			$chain->next();
 
@@ -79,13 +64,42 @@
 			return $this;
 		}
 
-		protected function checkControllerName($area, $path)
+		protected function getControllerNameByArea(InterceptingChain $chain)
 		{
-			return
-				ClassUtils::isClassName($area)
-				&& $path
-				&& is_readable($path.$area.EXT_CLASS);
+			$request = $chain->getRequest();
+
+			$area = null;
+			if ($request->hasAttachedVar('area')) {
+				$area = $request->getAttachedVar('area');
+			} elseif ($request->hasGetVar('area')) {
+				$area = $chain->getRequest()->getGetVar('area');
+			} elseif ($request->hasPostVar('area')) {
+				$area = $chain->getRequest()->getPostVar('area');
+			}
+
+			if (
+				$area
+				&& $this->checkControllerName($area.self::CONTROLLER_POSTFIX, $chain->getPathController())
+			) {
+				return $area.self::CONTROLLER_POSTFIX;
+			} elseif ($area) {
+				HeaderUtils::sendHttpStatus(new HttpStatus(HttpStatus::CODE_404));
+				return $this->notfoundController;
+			}
+			return null;
 		}
 
+		protected function getControllerNameByOtherData(InterceptingChain $chain)
+		{
+			return null;
+		}
+
+		protected function checkControllerName($controllerName, $path)
+		{
+			return
+				ClassUtils::isClassName($controllerName)
+				&& $path
+				&& is_readable($path.$controllerName.EXT_CLASS);
+		}
 	}
 ?>

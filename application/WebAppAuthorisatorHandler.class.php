@@ -10,12 +10,12 @@
  *                                                                         *
  ***************************************************************************/
 
-	class WebAppAuthorisatorInit implements InterceptingChainHandler
+	class WebAppAuthorisatorHandler implements InterceptingChainHandler
 	{
 		protected $authorisatorList = array();
 
 		/**
-		 * @return WebAppAuthorisatorInit
+		 * @return WebAppAuthorisatorHandler
 		 */
 		public static function create()
 		{
@@ -23,7 +23,7 @@
 		}
 
 		/**
-		 * @return WebAppAuthorisatorInit
+		 * @return WebAppAuthorisatorHandler
 		 */
 		public function run(InterceptingChain $chain)
 		{
@@ -40,7 +40,7 @@
 		}
 
 		/**
-		 * @return WebAppAuthorisatorInit
+		 * @return WebAppAuthorisatorHandler
 		 */
 		public function addAuthorisator($nameInLocator, Authorisator $authorisator)
 		{

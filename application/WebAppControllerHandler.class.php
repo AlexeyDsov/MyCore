@@ -24,28 +24,10 @@
 		 */
 		public function run(InterceptingChain $chain)
 		{
-			$controllerName = $this->getControllerName($chain);
+			$controller = $this->getController($chain);
 
-			Assert::isNotEmpty($controllerName);
-
-			$controller = $chain->getServiceLocator()->spawn($controllerName);
-			$this->prepairController($chain, $controller);
-
-			$modelAndView = $controller->handleRequest($chain->getRequest());
-
-			if (!$modelAndView) {
-				throw new WrongStateException(
-					"After controller '{$controllerName}::handleRequest' we expect get ModelAndView, but not null"
-				);
-			}
-
-			if (!$modelAndView->getView()) {
-				$modelAndView->setView($controllerName);
-			}
-
-			if (!$modelAndView->getView() instanceof RedirectView) {
-				$this->prepairNonRedirectModel($chain, $controllerName, $modelAndView->getModel());
-			}
+			$modelAndView = $this->handleRequest($chain, $controller);
+			$this->prepairModelAndView($chain, $modelAndView);
 
 			$chain->setMav($modelAndView);
 
@@ -55,30 +37,51 @@
 		}
 
 		/**
-		 * @param InterceptingChain $chain
-		 * @return string
+		 * @return ModelAndView
 		 */
-		protected function getControllerName(InterceptingChain $chain) {
-			return $chain->getControllerName();
+		protected function handleRequest(InterceptingChain $chain, Controller $controller) {
+			$modelAndView = $controller->handleRequest($chain->getRequest());
+
+			if (!$modelAndView instanceof ModelAndView) {
+				throw new WrongStateException(
+					'Controller \''.get_class($controller).'\' instead ModelAndView return null'
+				);
+			}
+
+			return $modelAndView;
 		}
 
 		/**
 		 * @param InterceptingChain $chain
-		 * @param string $controllerName
-		 * @param Model $model
-		 * @return WebAppControllerHandler
+		 * @return Controller
 		 */
-		protected function prepairNonRedirectModel(InterceptingChain $chain, $controllerName, Model $model) {
-			return $this;
+		protected function getController(InterceptingChain $chain) {
+			$controllerName = $chain->getControllerName();
+			return new $controllerName();
 		}
 
 		/**
-		 * @param InterceptingChain $chain
-		 * @param Controller $controller
 		 * @return WebAppControllerHandler
 		 */
-		protected function prepairController(InterceptingChain $chain, Controller $controller)
-		{
+		protected function prepairModelAndView(InterceptingChain $chain, ModelAndView $modelAndView) {
+			$controllerName = $chain->getControllerName();
+
+			if (!$modelAndView->getView()) {
+				$modelAndView->setView($controllerName);
+			}
+
+			if (!$modelAndView->getView() instanceof RedirectView) {
+				$modelAndView->getModel()->
+					set('baseUrl', $chain->getPathWeb())->
+					set('controllerName', $controllerName);
+
+				// do not rewrite!
+				if (!$modelAndView->getModel()->has('selfUrl')) {
+					$modelAndView->getModel()->
+						set('selfUrl', $chain->getPathWeb().'?area='.$controllerName);
+				}
+			}
+
 			return $this;
 		}
 	}
