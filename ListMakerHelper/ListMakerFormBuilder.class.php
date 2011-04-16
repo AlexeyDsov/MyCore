@@ -60,9 +60,9 @@
 			if ($form === null) {
 				$form = Form::create();
 			}
-			$this
-				->initForm($form)
-				->fillForm($form);
+			$this->
+				initForm($form)->
+				fillForm($form);
 
 			return $form;
 		}

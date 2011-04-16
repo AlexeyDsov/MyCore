@@ -14,5 +14,4 @@
 		public function run(InterceptingChain $chain);
 
 	}
-
 ?>

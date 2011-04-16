@@ -10,9 +10,9 @@
  *                                                                         *
  ***************************************************************************/
 
-interface IServiceLocatorSupport {
-	public function setServiceLocator(IServiceLocator $serviceLocator);
+	interface IServiceLocatorSupport {
+		public function setServiceLocator(IServiceLocator $serviceLocator);
 
-	public function getServiceLocator();
-}
+		public function getServiceLocator();
+	}
 ?>

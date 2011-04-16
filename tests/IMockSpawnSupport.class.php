@@ -10,24 +10,24 @@
  *                                                                         *
  ***************************************************************************/
 
-interface IMockSpawnSupport {
+	interface IMockSpawnSupport {
 
-	public function getMock($className);
+		public function getMock($className);
 
-	public function getAny();
+		public function getAny();
 
-	public function getNever();
+		public function getNever();
 
-	public function getOnce();
+		public function getOnce();
 
-	public function getExactly($callTimes);
+		public function getExactly($callTimes);
 
-	public function getAt($callTime);
+		public function getAt($callTime);
 
-	public function getReturnArgument($argumentNumber);
+		public function getReturnArgument($argumentNumber);
 
-	public function getReturnCallback(Closure $callBack);
+		public function getReturnCallback(Closure $callBack);
 
-	public function getReturnValue($value);
-}
+		public function getReturnValue($value);
+	}
 ?>
