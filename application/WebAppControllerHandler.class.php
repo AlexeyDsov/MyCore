@@ -57,7 +57,7 @@
 		 */
 		protected function getController(InterceptingChain $chain) {
 			$controllerName = $chain->getControllerName();
-			return new $controllerName();
+			return $chain->getServiceLocator()->spawn($controllerName);
 		}
 
 		/**
@@ -68,18 +68,6 @@
 
 			if (!$modelAndView->getView()) {
 				$modelAndView->setView($controllerName);
-			}
-
-			if (!$modelAndView->getView() instanceof RedirectView) {
-				$modelAndView->getModel()->
-					set('baseUrl', $chain->getPathWeb())->
-					set('controllerName', $controllerName);
-
-				// do not rewrite!
-				if (!$modelAndView->getModel()->has('selfUrl')) {
-					$modelAndView->getModel()->
-						set('selfUrl', $chain->getPathWeb().'?area='.$controllerName);
-				}
 			}
 
 			return $this;

@@ -49,7 +49,7 @@
 		 * @return ViewResolver
 		 */
 		protected function getViewResolver(InterceptingChain $chain, Model $model) {
-			return PhpViewResolver::create($chain->getPathTemplateDefault(), EXT_TPL);
+			return PhpViewResolver::create($chain->getPathTemplate(), EXT_TPL);
 		}
 
 		/**
