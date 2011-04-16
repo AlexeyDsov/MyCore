@@ -11,23 +11,9 @@
  ***************************************************************************/
 
 	/**
-	 * @see Session
-	**/
-	final class SessionWrapperNotStartedException extends BaseException
-	{
-		public function __construct()
-		{
-			return
-				parent::__construct(
-					'start session before assign or access session variables'
-				);
-		}
-	}
-
-	/**
 	 * Dynamic wrapper around session_*() functions.
 	**/
-	final class SessionWrapper extends Singleton
+	class SessionWrapper extends Singleton implements ISessionWrapper
 	{
 		private $isStarted = false;
 
