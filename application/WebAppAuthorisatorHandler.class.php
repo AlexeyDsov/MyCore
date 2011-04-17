@@ -28,10 +28,9 @@
 		public function run(InterceptingChain $chain)
 		{
 			$serviceLocator = $chain->getServiceLocator();
-			$session = $serviceLocator->get('session');
-
 			foreach ($this->authorisatorList as $authrisatorName => $authorisator) {
-				$serviceLocator->set($authrisatorName, $authorisator->setSession($session));
+				$this->setupAuthorisator($chain, $authorisator);
+				$serviceLocator->set($authrisatorName, $authorisator);
 			}
 
 			$chain->next();
@@ -46,6 +45,32 @@
 		{
 			$this->authorisatorList[$nameInLocator] = $authorisator;
 			return $this;
+		}
+
+		/**
+		 * @param Authorisator $authorisator
+		 * @return $this;
+		 */
+		protected function setupAuthorisator(InterceptingChain $chain, Authorisator $authorisator)
+		{
+			$authorisator->setSession($chain->getServiceLocator()->get('session'));
+			if ($userData = $this->getUniqUserData($chain)) {
+				$authorisator->setUniqData($userData);
+			}
+
+			return $this;
+		}
+
+		/**
+		 * @param InterceptingChain $chain
+		 * @return string
+		 */
+		protected function getUniqUserData(InterceptingChain $chain) {
+			$request = $chain->getRequest();
+			/* @var $request HttpRequest */
+			$remoteIp = $request->getServerVar('REMOTE_ADDR');
+			$remoteUserAgent = $request->getServerVar('HTTP_USER_AGENT');
+			return $remoteIp.$remoteUserAgent;
 		}
 	}
 ?>

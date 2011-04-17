@@ -21,6 +21,7 @@
 
 		protected $preloadedUserId = false;
 		protected $userId = null;
+		protected $hash = null;
 
 		/**
 		 * @return Authorisator
@@ -77,10 +78,45 @@
 			return $this;
 		}
 
+		/**
+		 * @param string $uniqData
+		 * @return AuthorisatorWithUniqData
+		 */
+		public function setUniqData($uniqData)
+		{
+			Assert::isString($uniqData);
+			$this->hash = md5($uniqData);
+			return $this;
+		}
+
+		/**
+		 * @param string $hash
+		 * @return AuthorisatorWithUniqData
+		 */
+		public function setHash($hash)
+		{
+			Assert::isString($hash);
+			$this->hash = $hash;
+			return $this;
+		}
+
+		/**
+		 * @return string
+		 */
+		public function getHash()
+		{
+			return $this->hash;
+		}
+
 		public function getUser()
 		{
 			Assert::isNotNull($this->session, 'session must be setted');
 			Assert::isNotEmpty($this->userClassName, 'userClassName must be setted');
+
+			$hash = $this->session->get($this->getHashParamName());
+			if ($hash != $this->hash) {
+				return null;
+			}
 
 			if ($this->preloadedUserId === true) {
 				if ($this->userId !== null) {
@@ -129,6 +165,7 @@
 			$this->session->assign($this->userIdParamName, $userId);
 			$this->userId = $userId;
 			$this->preloadedUserId = true;
+			$this->session->assign($this->getHashParamName(), $this->hash);
 
 			return $this;
 		}
@@ -144,7 +181,17 @@
 			}
 			$this->userId = null;
 			$this->preloadedUserId = true;
+			$this->session->drop($this->getHashParamName());
+
 			return $this;
+		}
+
+		/**
+		 * @return string
+		 */
+		protected function getHashParamName()
+		{
+			return $this->getUserIdParamName().'hash';
 		}
 	}
 ?>
