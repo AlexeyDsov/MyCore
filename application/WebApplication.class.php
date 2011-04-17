@@ -50,6 +50,9 @@
 
 		public function getVar($name)
 		{
+			if (!$this->hasVar($name)) {
+				throw new MissingElementException("not found var '$name'");
+			}
 			return $this->vars[$name];
 		}
 
@@ -58,6 +61,9 @@
 		 */
 		public function setVar($name, $var)
 		{
+			if ($this->hasVar($name)) {
+				throw new WrongStateException("var '$name' already stted");
+			}
 			$this->vars[$name] = $var;
 
 			return $this;
