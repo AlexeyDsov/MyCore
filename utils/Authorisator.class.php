@@ -19,8 +19,8 @@
 		protected $userClassName = null;
 		protected $userIdParamName = 'userId';
 
-		protected $preloadedUser = false;
-		protected $user = null;
+		protected $preloadedUserId = false;
+		protected $userId = null;
 
 		/**
 		 * @return Authorisator
@@ -82,14 +82,17 @@
 			Assert::isNotNull($this->session, 'session must be setted');
 			Assert::isNotEmpty($this->userClassName, 'userClassName must be setted');
 
-			if ($this->preloadedUser === true) {
-				return $this->user;
+			if ($this->preloadedUserId === true) {
+				if ($this->userId !== null) {
+					return ClassUtils::callStaticMethod("{$this->userClassName}::dao")
+						->getById($this->userId);
+				}
+				return null;
 			}
-			$this->preloadedUser = true;
-
+			$this->preloadedUserId = true;
 
 			if (!$this->session->isStarted()) {
-				return $this->user = null;
+				return $this->userId = null;
 			}
 
 			$form = Form::create()->add(
@@ -101,10 +104,12 @@
 			$form->import($this->session->getAll());
 
 			if ($form->getErrors()) {
-				return $this->user = null;
+				return $this->userId = null;
 			}
 
-			return $this->user = $form->getValue($this->userIdParamName);
+			$user = $form->getValue($this->userIdParamName);
+			$this->userId = $user->getId();
+			return $user;
 		}
 
 		/**
@@ -114,12 +119,17 @@
 		{
 			Assert::isNotNull($this->session, 'session must be setted');
 			Assert::isNotEmpty($this->userClassName, 'userClassName must be setted');
+			Assert::isInstance($user, $this->userClassName);
 
 			if (!$this->session->isStarted()) {
 				$this->session->start();
 			}
 
-			$this->session->assign($this->userIdParamName, $user->getId());
+			$userId = $user->getId();
+			$this->session->assign($this->userIdParamName, $userId);
+			$this->userId = $userId;
+			$this->preloadedUserId = true;
+
 			return $this;
 		}
 
@@ -132,6 +142,8 @@
 			if ($this->session->isStarted()) {
 				$this->session->drop($this->userIdParamName);
 			}
+			$this->userId = null;
+			$this->preloadedUserId = true;
 			return $this;
 		}
 	}
