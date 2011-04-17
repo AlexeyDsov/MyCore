@@ -138,7 +138,7 @@
 		}
 
 		/**
-		 * @return ServiceLocator
+		 * @return WebApplication
 		 */
 		public function setServiceLocator(IServiceLocator $serviceLocator)
 		{
