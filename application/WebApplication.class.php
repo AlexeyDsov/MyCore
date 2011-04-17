@@ -13,7 +13,7 @@
 	{
 		const OBJ_REQUEST = 'request';
 		const OBJ_MAV = 'mav';
-		const OBJ_CONTROLLER = 'controller';
+		const OBJ_CONTROLLER_NAME = 'controllerName';
 		const OBJ_SERVICE_LOCATOR = 'serviceLocator';
 		const OBJ_PATH_WEB = 'pathWeb';
 		const OBJ_PATH_CONTROLLER = 'pathController';
