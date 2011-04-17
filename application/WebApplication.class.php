@@ -106,22 +106,6 @@
 			return $this->setVar(self::OBJ_MAV, $mav);
 		}
 
-		/**
-		 * @return Controller
-		 */
-		public function getController()
-		{
-			return $this->getVar(self::OBJ_CONTROLLER);
-		}
-
-		/**
-		 * @return WebApplication
-		 */
-		public function setController(Controller $controller)
-		{
-			return $this->setVar(self::OBJ_CONTROLLER, $controller);
-		}
-
 		public function getControllerName()
 		{
 			return $this->getVar(self::OBJ_CONTROLLER_NAME);
