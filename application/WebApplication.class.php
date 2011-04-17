@@ -14,7 +14,6 @@
 		const OBJ_REQUEST = 'request';
 		const OBJ_MAV = 'mav';
 		const OBJ_CONTROLLER = 'controller';
-		const OBJ_CONTROLLER_NAME = 'controllerName';
 		const OBJ_SERVICE_LOCATOR = 'serviceLocator';
 		const OBJ_PATH_WEB = 'pathWeb';
 		const OBJ_PATH_CONTROLLER = 'pathController';
@@ -65,6 +64,19 @@
 				throw new WrongStateException("var '$name' already stted");
 			}
 			$this->vars[$name] = $var;
+
+			return $this;
+		}
+
+		/**
+		 * @return WebApplication
+		 */
+		public function dropVar($name)
+		{
+			if (!$this->hasVar($name)) {
+				throw new MissingElementException("not found var '$name'");
+			}
+			unset($this->vars[$name]);
 
 			return $this;
 		}
