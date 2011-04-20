@@ -113,6 +113,11 @@
 			Assert::isNotNull($this->session, 'session must be setted');
 			Assert::isNotEmpty($this->userClassName, 'userClassName must be setted');
 
+			if (!$this->session->isStarted()) {
+				$this->preloadedUserId = false;
+				return $this->userId = null;
+			}
+
 			$hash = $this->session->get($this->getHashParamName());
 			if ($hash != $this->hash) {
 				return null;
@@ -126,10 +131,6 @@
 				return null;
 			}
 			$this->preloadedUserId = true;
-
-			if (!$this->session->isStarted()) {
-				return $this->userId = null;
-			}
 
 			$form = Form::create()->add(
 				Primitive::identifier($this->userIdParamName)->
