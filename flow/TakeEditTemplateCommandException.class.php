@@ -10,23 +10,5 @@
  *                                                                         *
  ***************************************************************************/
 
-define('PATH_CORE', dirname(__FILE__).DS);
-
-ini_set(
-	'include_path',
-	get_include_path()
-	. join(
-		PATH_SEPARATOR,
-		array(
-			PATH_CORE.'ListMakerHelper',
-			PATH_CORE.'access',
-			PATH_CORE.'application',
-			PATH_CORE.'serviceLocator',
-			PATH_CORE.'flow',
-			PATH_CORE.'utils',
-		)
-	)
-	. PATH_SEPARATOR
-);
-
+	class TakeEditTemplateCommandException extends BaseException {/*_*/}
 ?>
