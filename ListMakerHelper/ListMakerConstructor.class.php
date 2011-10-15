@@ -38,7 +38,7 @@
 		protected $propertyList = array();
 
 		protected $offsetName = 'offset';
-		protected $limit = 10;
+		protected $limitName = 'limit';
 
 		public function __construct(AbstractProtoClass $proto, array $propertyList)
 		{
@@ -75,18 +75,18 @@
 		/**
 		 * @return string
 		 */
-		public function getLimit()
+		public function getLimitName()
 		{
-			return $this->limit;
+			return $this->limitName;
 		}
 
 		/**
 		 * @var ListMakerConstructor
 		 */
-		public function setLimit($limit)
+		public function setLimitName($limitName)
 		{
-			Assert::isPositiveInteger($limit);
-			$this->limit = $limit;
+			Assert::isString($limitName);
+			$this->limitName = $limitName;
 			return $this;
 		}
 
@@ -117,7 +117,7 @@
 		{
 			$criteria->
 				setOffset($form->getSafeValue($this->offsetName))->
-				setLimit($this->limit);
+				setLimit($form->getSafeValue($this->limitName));
 
 			$formData = $form->export();
 
@@ -214,9 +214,15 @@
 			if (isset($options[ListMakerProperties::OPTION_FILTERABLE])) {
 				$filterList = $options[ListMakerProperties::OPTION_FILTERABLE];
 				Assert::isArray($filterList, 'OPTION_FILTERABLE must be array');
+
 				foreach ($filterList as $filterName) {
 					if (isset($propertyData[$filterName])) {
 						$value = $propertyData[$filterName];
+						//@todo @hack
+						if ('date' == $propertyType) {
+							$value = $value['year'] . '-' . $value['month'] . '-' . $value['day'];
+						}
+
 						if (isset($this->binaryExpressionMapping[$filterName])) {
 							$criteria->add($this->makeExpressionBinary($objectLink, $filterName, $value));
 						} elseif (isset($this->postfixExpressionMapping[$filterName])) {
@@ -226,7 +232,7 @@
 								$criteria->add($inExpression);
 							}
 						} else {
-							throw new UnimplementedFeatureException('Unkown filterName: '.$filterName);
+							throw new UnimplementedFeatureException('Unknown filterName: '.$filterName);
 						}
 					}
 				}
@@ -241,7 +247,8 @@
 		 * @param string $value
 		 * @return BinaryExpression
 		 */
-		protected function makeExpressionBinary($objectLink, $filterName, $value) {
+		protected function makeExpressionBinary($objectLink, $filterName, $value)
+		{
 			if (!isset($this->binaryExpressionMapping[$filterName])) {
 				throw new UnimplementedFeatureException('Unkown binary filter: '.$filterName);
 			}
@@ -254,9 +261,10 @@
 		 * @param string $filterName
 		 * @return PostfixUnaryExpression
 		 */
-		protected function makeExpressionTernary($objectLink, $filterName) {
+		protected function makeExpressionTernary($objectLink, $filterName)
+		{
 			if (!isset($this->postfixExpressionMapping[$filterName])) {
-				throw new UnimplementedFeatureException('Unkown ternary filter: '.$filterName);
+				throw new UnimplementedFeatureException('Unknown ternary filter: '.$filterName);
 			}
 			$logic = $this->postfixExpressionMapping[$filterName];
 			return new PostfixUnaryExpression($objectLink, $logic);
@@ -268,7 +276,8 @@
 		 * @param string $value
 		 * @return LogicalObject
 		 */
-		protected function makeExpressionIn($objectLink, $value) {
+		protected function makeExpressionIn($objectLink, $value)
+		{
 			Assert::isArray($value);
 			$inArray = array();
 			foreach ($value as $element) {
@@ -283,4 +292,3 @@
 			return null;
 		}
 	}
-?>

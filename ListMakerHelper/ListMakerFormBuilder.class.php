@@ -19,6 +19,9 @@
 		protected $propertyList = array();
 
 		protected $offsetName = 'offset';
+		protected $limitName = 'limit';
+
+		private $defaultLimit = 20;
 
 		public function __construct(AbstractProtoClass $proto, array $propertyList)
 		{
@@ -50,6 +53,42 @@
 			Assert::isString($offsetName);
 			$this->offsetName = $offsetName;
 			return $this;
+		}
+
+		/**
+		 * @var ListMakerConstructor
+		 */
+		public function setLimitName($limitName)
+		{
+			Assert::isString($limitName);
+			$this->limitName = $limitName;
+			return $this;
+		}
+
+		/**
+		 * @return string
+		 */
+		public function getLimitName()
+		{
+			return $this->limitName;
+		}
+
+		/**
+		 * @return ListMakerFormBuilder
+		 */
+		public function setDefaultLimit($limit)
+		{
+			Assert::isPositiveInteger($limit);
+			$this->defaultLimit = $limit;
+			return $this;
+		}
+
+		/**
+		 * @return int
+		 */
+		public function getDefaultLimit()
+		{
+			return $rhis->defaultLimit;
 		}
 
 		/**
@@ -86,11 +125,9 @@
 		 */
 		protected function fillForm(Form $form)
 		{
-			$form->add(
-				Primitive::integer($this->offsetName)->
-					setMin(0)->
-					setDefault(0)
-			);
+			$form->
+				add(Primitive::integer($this->offsetName)->setMin(0)->setDefault(0))->
+				add(Primitive::integer($this->limitName)->setMin(0)->setDefault($this->defaultLimit));
 
 			foreach ($this->propertyList as $propertyName => $options) {
 				if ($propertyForm = $this->makePropertyForm($propertyName)) {
@@ -107,7 +144,8 @@
 		 * @param string $propertyName
 		 * @return Form
 		 */
-		protected function makePropertyForm($propertyName) {
+		protected function makePropertyForm($propertyName)
+		{
 			$options = $this->propertyList[$propertyName];
 			$objectLink = isset($options[ListMakerProperties::OPTION_OBJECT_LINK])
 				? $options[ListMakerProperties::OPTION_OBJECT_LINK]
@@ -140,6 +178,7 @@
 							break;
 						case ListMakerProperties::OPTION_FILTERABLE_IN:
 							$prmitiveList[] = $this->makePrimitiveIn($filterName, $propertyType);
+							break;
 						default:
 							throw new UnimplementedFeatureException('Unkown filter name: '.$filterName);
 					}
@@ -165,7 +204,8 @@
 			return $form;
 		}
 
-		protected function makePrimitiveComparison($filterName, $propertyType) {
+		protected function makePrimitiveComparison($filterName, $propertyType)
+		{
 			switch ($propertyType) {
 				case 'identifier':
 				case 'identifierList':
@@ -173,6 +213,8 @@
 				case 'enumeration':
 				case 'integer':
 					return Primitive::integer($filterName);
+				case 'float':
+					return Primitive::float($filterName);
 				case 'timestamp':
 					return Primitive::timestamp($filterName);
 				case 'date':
@@ -190,11 +232,13 @@
 			Assert::isUnreachable();
 		}
 
-		protected function makePrimitiveTernaryLogic($filterName) {
+		protected function makePrimitiveTernaryLogic($filterName)
+		{
 			return Primitive::boolean($filterName);
 		}
 
-		protected function makePrimitiveIn($filterName, $propertyType) {
+		protected function makePrimitiveIn($filterName, $propertyType)
+		{
 			switch ($propertyType) {
 				case 'identifier':
 				case 'identifierList':
@@ -203,7 +247,7 @@
 				case 'integer':
 					$primitive = new PrimitiveArray($filterName);
 					$filter = Filter::pcre()->setExpression('~[^\d]~iu', '');
-					return $primitive->setImportFilter($filter);
+					return $primitive->addImportFilter($filter);
 				case 'timestamp':
 				case 'date':
 				case 'string':
@@ -219,4 +263,3 @@
 			Assert::isUnreachable();
 		}
 	}
-?>
