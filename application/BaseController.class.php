@@ -72,10 +72,9 @@
 
 		protected function getMavRedirectByUrl($url)
 		{
-			return
-				ModelAndView::create()->setView(
-					RedirectView::create($url)
-				);
+			return ModelAndView::create()->setView(
+				RedirectView::create($url)
+			);
 		}
 
 		protected function resolveAction(HttpRequest $request, Form $form = null)
@@ -113,16 +112,21 @@
 				return $mav;
 			}
 
-			$this->prepairData($request);
-
-			$this->model->set($this->actionName, $action);
+			$mav = $this->prepairData($request, $mav);
+			$mav->getModel()->set($this->actionName, $action);
 
 			return $mav;
 		}
 
-		protected function prepairData(HttpRequest $request)
+		/**
+		 * Дает возможность в наследниках модифицировать model в ModelAndView перед возвращением ее пользователю
+		 * @param HttpRequest $request
+		 * @param ModelAndView $mav
+		 * @return ModelAndView 
+		 */
+		protected function prepairData(HttpRequest $request, ModelAndView $mav)
 		{
-			return $this;
+			return $mav;
 		}
 
 		protected function setupMeta()
