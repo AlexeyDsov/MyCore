@@ -14,6 +14,7 @@
 	{
 		private static $ajaxRequestVar = 'HTTP_X_REQUESTED_WITH';
 		private static $ajaxRequestValueList = array('XMLHttpRequest');
+		private static $pjaxRequestVar = 'HTTP_X_PJAX';
 
 		/**
 		 * @return WebAppAjaxHandler
@@ -28,10 +29,15 @@
 		 */
 		public function run(InterceptingChain $chain)
 		{
-			$isAjaxRequest = $this->isAjaxRequest($chain->getRequest());
+			/* @var $chain WebApplication */
+			$isPjaxRequest = $this->isPjaxRequest($chain->getRequest());
+			$isAjaxRequest = !$isPjaxRequest && $this->isAjaxRequest($chain->getRequest());
 
+			$chain->setVar('isPjax', $isPjaxRequest);
 			$chain->setVar('isAjax', $isAjaxRequest);
-			$chain->getServiceLocator()->set('isAjax', $isAjaxRequest);
+			$chain->getServiceLocator()->
+				set('isPjax', $isPjaxRequest)->
+				set('isAjax', $isAjaxRequest);
 
 			$chain->next();
 
@@ -45,8 +51,8 @@
 		{
 			$form = Form::create()->
 				add(
-					Primitive::plainChoice(self::$ajaxRequestVar)->
-						setList(self::$ajaxRequestValueList)
+					Primitive::plainChoice(self::$ajaxRequestVar)
+						->setList(self::$ajaxRequestValueList)
 				)->
 				add(
 					Primitive::boolean('isAjax')
@@ -63,6 +69,28 @@
 			if ($form->getValue('isAjax')) {
 				return true;
 			}
+			return false;
+		}
+
+		/**
+		 * @return boolean
+		 */
+		public function isPjaxRequest(HttpRequest $request)
+		{
+			$form = Form::create()->
+				add(
+					Primitive::boolean(self::$pjaxRequestVar)
+				)->
+				add(
+					Primitive::boolean('isPjax')
+				)->
+				import($request->getServer())->
+				importOneMore('isPjax', $request->getGet());
+
+			if ($form->getErrors()) {
+				return false;
+			}
+			return $form->getValue(self::$pjaxRequestVar) || $form->getValue('isPjax');
 		}
 	}
 ?>

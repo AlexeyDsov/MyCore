@@ -62,5 +62,17 @@
 			Assert::isScalar($name);
 			return array_key_exists($name, $this->params);
 		}
+
+		/**
+		 * Короткий вызов для htmlspecialchars в шаблоне
+		 * @param string $value
+		 * @return string
+		 */
+		protected function escape($value/*,  sprintf params */) {
+			if (func_num_args() > 1) {
+				$value = call_user_func_array('sprintf', func_get_args());
+			}
+			return htmlspecialchars($value);
+		}
 	}
 ?>

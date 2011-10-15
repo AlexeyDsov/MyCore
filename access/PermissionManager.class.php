@@ -10,17 +10,25 @@
  *                                                                         *
  ***************************************************************************/
 
-define('PATH_CORE', dirname(__FILE__).DS);
+	class PermissionManager {
 
-ini_set(
-	'include_path',
-	get_include_path()
+		/**
+		 * Статическое создание объекта класса
+		 * @return PermissionManager
+		 */
+		public static function create() {
+			return new self;
+		}
 
-	.PATH_CORE.'ListMakerHelper'.PATH_SEPARATOR
-	.PATH_CORE.'access'.PATH_SEPARATOR
-	.PATH_CORE.'application'.PATH_SEPARATOR
-	.PATH_CORE.'serviceLocator'.PATH_SEPARATOR
-	.PATH_CORE.'utils'.PATH_SEPARATOR
-);
+		/**
+		 * Возвращает признак
+		 * @param IPermissionUser $user
+		 * @param string $action
+		 * @return bool
+		 */
+		public function hasPermission(IPermissionUser $user, $action) {
+			$actionList = $user->getActionList();
 
-?>
+			return (array_search($action, $actionList) !== false);
+		}
+	}

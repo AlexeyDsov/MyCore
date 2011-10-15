@@ -12,6 +12,12 @@
 	class WebAppViewHandler implements InterceptingChainHandler
 	{
 		/**
+		 * HTTP заголовки ответа
+		 * @var array<assoc>
+		 */
+		private $headers = array();
+		
+		/**
 		 * @return WebAppViewHandler
 		 */
 		public static function create()
@@ -20,6 +26,8 @@
 		}
 
 		/**
+		 * Выполняем ренедринг шаблона по ModelAndView из $chain'а
+		 * @param InterceptingChain $chain
 		 * @return WebAppViewHandler
 		 */
 		public function run(InterceptingChain $chain)
@@ -33,6 +41,10 @@
 				$view = $viewResolver->resolveViewName($viewName);
 			}
 
+			foreach ($this->headers as $name => $value) {
+				header("$name: $value");
+			}
+
 			if ($chain->getMav()->viewIsNormal()) {
 				$this->updateNonRedirectModel($chain, $model);
 			}
@@ -44,6 +56,19 @@
 		}
 
 		/**
+		 * Добавляет заголовок, если уже такой есть - перезаписывает
+		 *
+		 * @param string $name имя заголовка
+		 * @param string $value значение заголовка
+		 * @return WebAppViewHandler
+		 */
+		public function addHeader($name, $value) {
+			$this->headers[$name] = $value;
+			return $this;
+		}
+
+		/**
+		 * Получаем простой ViewResolver
 		 * @param InterceptingChain $chain
 		 * @param Model $model
 		 * @return ViewResolver
@@ -53,6 +78,7 @@
 		}
 
 		/**
+		 * Обновляем и дополняем модель перед передачей во view
 		 * @param Model $model
 		 * @return WebAppViewHandler
 		 */

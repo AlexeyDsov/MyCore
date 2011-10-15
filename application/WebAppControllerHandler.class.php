@@ -52,6 +52,7 @@
 		}
 
 		/**
+		 * По параметрам из chain создаем контроллер
 		 * @param InterceptingChain $chain
 		 * @return Controller
 		 */
