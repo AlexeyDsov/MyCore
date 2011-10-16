@@ -20,8 +20,10 @@
 		 * @var ServiceLocator
 		 */
 		protected $serviceLocator = null;
-		
-		protected $logClass = null;
+		/**
+		 * @var Closure
+		 */
+		protected $logCallback = null;
 
 		/**
 		 * @param IServiceLocator $serviceLocator
@@ -42,12 +44,12 @@
 		}
 		
 		/**
-		 * @param type $logClass
+		 * @param Closure $logCallback
 		 * @return TakeEditToolkitCommand 
 		 */
-		public function setLogClass($logClass)
+		public function setLogCallback(Closure $logCallback)
 		{
-			$this->logClass = $logClass;
+			$this->logCallback = $logCallback;
 			return $this;
 		}
 
@@ -138,20 +140,14 @@
 		/**
 		 * @param array $data
 		 * @param IdentifiableObject $subject
-		 * @return mixed
+		 * @return TakeEditToolkitCommand
 		 */
 		protected function logData($data, IdentifiableObject $subject)
 		{
-			if ($this->logClass) {
-				$log = IngLog::createByObject(
-					$data,
-					$subject,
-					$this->serviceLocator->get('admin')->getUser()
-				);
-
-				return $log->dao()->add($log);
+			if ($this->logCallback) {
+				$this->logCallback->__invoke($data, $subject);
 			}
-			return null;
+			return $this;
 		}
 
 		protected function getDiffData($newData, $oldData)
