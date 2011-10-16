@@ -51,8 +51,8 @@
 		{
 			$form = Form::create()->
 				add(
-					Primitive::plainChoice(self::$ajaxRequestVar)
-						->setList(self::$ajaxRequestValueList)
+					Primitive::plainChoice(self::$ajaxRequestVar)->
+						setList(self::$ajaxRequestValueList)
 				)->
 				add(
 					Primitive::boolean('isAjax')

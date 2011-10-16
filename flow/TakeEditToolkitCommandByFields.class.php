@@ -25,7 +25,8 @@
 		 * Устаналивает список редактируемых через комманду пропертей объекта
 		 * @param array $fieldList
 		 */
-		public function setEditableFieldList(array $fieldList) {
+		public function setEditableFieldList(array $fieldList)
+		{
 			$this->editableFieldList = $fieldList;
 			if (!array_search('id', $fieldList)) {
 				$this->editableFieldList[] = 'id';
@@ -38,7 +39,8 @@
 		 * Базовая настройка формы - копирует в прототип нередактируемые свойства
 		 * @return TakeEditTemplateCommand
 		 */
-		protected function prepairForm(Prototyped $subject, Form $form, HttpRequest $request) {
+		protected function prepairForm(Prototyped $subject, Form $form, HttpRequest $request)
+		{
 			Assert::isNotEmpty($this->editableFieldList, "call before self::setEditableFieldList");
 			parent::prepairForm($subject, $form, $request);
 
@@ -54,7 +56,8 @@
 		 *   Удаление из полной формы полей, не разрешенных для редактирования
 		 * @return TakeEditTemplateCommand
 		 */
-		protected function prepairFormTakeImport(IdentifiableObject $subject, Form $form, HttpRequest $request) {
+		protected function prepairFormTakeImport(IdentifiableObject $subject, Form $form, HttpRequest $request)
+		{
 			parent::prepairFormTakeImport($subject, $form, $request);
 
 			ToolkitFormUtils::dropFormValuesNotInList($form, $this->editableFieldList);

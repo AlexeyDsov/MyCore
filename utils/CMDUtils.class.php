@@ -6,7 +6,8 @@
 		 * Настройки должны быть вида --param1=value1
 		 * @return array
 		 */
-		public static function getOptionsList() {
+		public static function getOptionsList()
+		{
 			$uArguments = $_SERVER['argv'];
 			array_shift($uArguments);
 			$arguments = array();

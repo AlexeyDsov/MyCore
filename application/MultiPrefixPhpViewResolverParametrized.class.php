@@ -27,7 +27,8 @@
 		 * @param string $name
 		 * @return MultiPrefixPhpViewResolverParametrized
 		 */
-		public function get($name) {
+		public function get($name)
+		{
 			if (!$this->has($name)) {
 				throw new MissingElementException("not setted value with name '$name'");
 			}
@@ -39,7 +40,8 @@
 		 * @param mixed $value
 		 * @return MultiPrefixPhpViewResolverParametrized
 		 */
-		public function set($name, $value) {
+		public function set($name, $value)
+		{
 			if ($this->has($name)) {
 				throw new WrongStateException("value with name '$name' already setted ");
 			}
@@ -51,7 +53,8 @@
 		 * @param string $name
 		 * @return MultiPrefixPhpViewResolverParametrized
 		 */
-		public function drop($name) {
+		public function drop($name)
+		{
 			if (!$this->has($name)) {
 				throw new MissingElementException("not setted value with name '$name'");
 			}
@@ -63,7 +66,8 @@
 		 * @param string $name
 		 * @return boolean
 		 */
-		public function has($name) {
+		public function has($name)
+		{
 			Assert::isScalar($name);
 			return array_key_exists($name, $this->params);
 		}

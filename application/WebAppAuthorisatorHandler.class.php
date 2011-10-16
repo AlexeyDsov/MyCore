@@ -65,7 +65,8 @@
 		 * @param InterceptingChain $chain
 		 * @return string
 		 */
-		protected function getUniqUserData(InterceptingChain $chain) {
+		protected function getUniqUserData(InterceptingChain $chain)
+		{
 			$request = $chain->getRequest();
 			/* @var $request HttpRequest */
 			$remoteIp = $request->getServerVar('REMOTE_ADDR');

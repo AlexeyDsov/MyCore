@@ -127,7 +127,8 @@
 		/**
 		 * @return HeadHelper
 		 */
-		public function addMetaHttpEquiv($httpEquiv, $content) {
+		public function addMetaHttpEquiv($httpEquiv, $content)
+		{
 			$this->metaList[] = array('http-equiv' => $httpEquiv, 'content' => $content);
 			return $this;
 		}
@@ -135,7 +136,8 @@
 		/**
 		 * @return HeadHelper
 		 */
-		public function addMetaName($name, $content) {
+		public function addMetaName($name, $content)
+		{
 			$this->metaList[] = array('name' => $name, 'content' => $content);
 			return $this;
 		}

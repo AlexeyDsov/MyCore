@@ -125,8 +125,8 @@
 
 			if ($this->preloadedUserId === true) {
 				if ($this->userId !== null) {
-					return ClassUtils::callStaticMethod("{$this->userClassName}::dao")
-						->getById($this->userId);
+					return ClassUtils::callStaticMethod("{$this->userClassName}::dao")->
+						getById($this->userId);
 				}
 				return null;
 			}

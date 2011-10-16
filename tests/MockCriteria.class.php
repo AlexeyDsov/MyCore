@@ -18,11 +18,13 @@
 		/**
 		 * @return MockCriteria
 		 */
-		public static function create($className = null) {
+		public static function create($className = null)
+		{
 			return new self($className);
 		}
 
-		public function __construct($className = null) {
+		public function __construct($className = null)
+		{
 			if ($className !== null) {
 				$this->of($className);
 			}
@@ -32,12 +34,14 @@
 		 * @param string $className
 		 * @return MockCriteria
 		 */
-		public function of($className) {
+		public function of($className)
+		{
 			$this->className = $className;
 			return $this;
 		}
 
-		public function addMethod(MockMethodAbstract $method) {
+		public function addMethod(MockMethodAbstract $method)
+		{
 			if ($method instanceof MockMethod) {
 				$this->addMethodForExahCall($method);
 			} elseif ($method instanceof MockMethodAt) {
@@ -53,7 +57,8 @@
 		 * @param string $methodName
 		 * @return bool
 		 */
-		public function hasMethod($methodName) {
+		public function hasMethod($methodName)
+		{
 			return isset($this->methodList[$methodName]);
 		}
 
@@ -61,7 +66,8 @@
 		 * @param string $methodName
 		 * @return MockCriteria
 		 */
-		public function dropMethod($methodName) {
+		public function dropMethod($methodName)
+		{
 			if (!isset($this->methodList[$methodName])) {
 				throw new MissingElementException("MockMethodAbstract does not exists: {$methodName} ");
 			}
@@ -73,7 +79,8 @@
 		 * @return object
 		 * @throw WrongArgumentException
 		 */
-		public function spawn(IMockSpawnSupport $test) {
+		public function spawn(IMockSpawnSupport $test)
+		{
 			Assert::isNotNull($this->className, 'Class of Mock object must be setted');
 
 			$mockObject = $test->getMock($this->className);
@@ -91,14 +98,16 @@
 			return $mockObject;
 		}
 
-		protected function addMethodForExahCall(MockMethod $method) {
+		protected function addMethodForExahCall(MockMethod $method)
+		{
 			if (isset($this->methodList[$method->getName()])) {
 				throw new WrongArgumentException("MockMethod with name {$method->getName()} already setted");
 			}
 			$this->methodList[$method->getName()] = $method;
 		}
 
-		protected function addMethodAtCall(MockMethodAt $method) {
+		protected function addMethodAtCall(MockMethodAt $method)
+		{
 			if (isset($this->methodList[$method->getName()])) {
 				$methodList = $this->methodList[$method->getName()];
 				if (!is_array($methodList)) {

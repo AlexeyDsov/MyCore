@@ -23,7 +23,8 @@
 		protected $returnSelf = false;
 		protected $returnFunction = false;
 
-		public function __construct($name) {
+		public function __construct($name)
+		{
 			$this->setName($name);
 		}
 
@@ -31,7 +32,8 @@
 		 * @param string $className
 		 * @return MockMethodAbstract
 		 */
-		public function setName($className) {
+		public function setName($className)
+		{
 			$this->name = $className;
 			return $this;
 		}
@@ -39,7 +41,8 @@
 		/**
 		 * @return string
 		 */
-		public function getName() {
+		public function getName()
+		{
 			return $this->name;
 		}
 
@@ -47,7 +50,8 @@
 		 * @param any $return
 		 * @return MockMethodAbstract
 		 */
-		public function setFunction(Closure $return) {
+		public function setFunction(Closure $return)
+		{
 			$this->function = $return;
 			return $this;
 		}
@@ -56,7 +60,8 @@
 		 * @param any $returnObject
 		 * @return MockMethodAbstract
 		 */
-		public function setReturn($returnObject) {
+		public function setReturn($returnObject)
+		{
 			$this->return = $returnObject;
 			return $this;
 		}
@@ -64,7 +69,8 @@
 		/**
 		 * @return MockMethodAbstract
 		 */
-		public function setThrowException(Exception $exception) {
+		public function setThrowException(Exception $exception)
+		{
 			$this->throwException = $exception;
 			return $this;
 		}
@@ -73,7 +79,8 @@
 		 * @param int $returnArgument
 		 * @return MockMethodAbstract
 		 */
-		public function setReturnArgument($returnArgument) {
+		public function setReturnArgument($returnArgument)
+		{
 			Assert::isPositiveInteger($returnArgument);
 			$this->returnArgument = $returnArgument;
 			return $this;
@@ -83,7 +90,8 @@
 		 * @param bool $returnObject
 		 * @return MockMethodAbstract
 		 */
-		public function setReturnSelf($returnSelf) {
+		public function setReturnSelf($returnSelf)
+		{
 			Assert::isTernaryBase($returnSelf);
 			$this->returnSelf = $returnSelf;
 			return $this;
@@ -93,7 +101,8 @@
 		 * @param bool $returnObject
 		 * @return MockMethodAbstract
 		 */
-		public function setReturnFunction($returnFunction) {
+		public function setReturnFunction($returnFunction)
+		{
 			Assert::isTernaryBase($returnFunction);
 			$this->returnFunction = $returnFunction;
 			return $this;
@@ -101,7 +110,8 @@
 
 		abstract public function integrateToObject(IMockSpawnSupport $test, $mockObject);
 
-		protected function spawnReturn(IMockSpawnSupport $test, $mockObject) {
+		protected function spawnReturn(IMockSpawnSupport $test, $mockObject)
+		{
 			$mockFunction = $this->function;
 			$mockReturn = $this->return;
 			$throwException = $this->throwException;
@@ -147,7 +157,8 @@
 			}
 		}
 
-		protected function assertDoubleReturns() {
+		protected function assertDoubleReturns()
+		{
 			$doubleList = array(
 				'throwException' => ($this->throwException !== null),
 				'returnArgument' => ($this->returnArgument !== null),

@@ -27,7 +27,8 @@
 		 * @param string $subPath
 		 * @return WebAppControllerMultiResolverHandler
 		 */
-		public function addSubPath($subPath) {
+		public function addSubPath($subPath)
+		{
 			$this->subPathList[] = $subPath;
 			return $this;
 		}

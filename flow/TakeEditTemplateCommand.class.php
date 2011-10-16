@@ -49,18 +49,18 @@
 						$this->takeObject($form, $subject);
 					} catch (TakeEditTemplateCommandException $e) {
 						$this->prepairErrorsForm($subject, $form, $request);
-						return ModelAndView::create()
-							->setView(EditorController::COMMAND_FAILED)
-							->setModel($this->getModel($subject, $form));
+						return ModelAndView::create()->
+							setView(EditorController::COMMAND_FAILED)->
+							setModel($this->getModel($subject, $form));
 					}
-					return ModelAndView::create()
-						->setModel($this->getModel($subject, $form))
-						->setView(EditorController::COMMAND_SUCCEEDED);
+					return ModelAndView::create()->
+						setModel($this->getModel($subject, $form))->
+						setView(EditorController::COMMAND_SUCCEEDED);
 				} else {
 					$this->prepairErrorsForm($subject, $form, $request);
-					return ModelAndView::create()
-						->setModel($this->getModel($subject, $form))
-						->setView(EditorController::COMMAND_FAILED);
+					return ModelAndView::create()->
+						setModel($this->getModel($subject, $form))->
+						setView(EditorController::COMMAND_FAILED);
 				}
 			} else {
 				throw new WrongStateException("Неожиданный {$this->actionMethod}  = ".$action);
@@ -72,7 +72,8 @@
 		 * Базовая настройка формы
 		 * @return TakeEditTemplateCommand
 		 */
-		protected function prepairForm(Prototyped $subject, Form $form, HttpRequest $request) {
+		protected function prepairForm(Prototyped $subject, Form $form, HttpRequest $request)
+		{
 			$form->importOne('id', $request->getGet())->importOneMore('id', $request->getPost());
 			return $this;
 		}
@@ -81,7 +82,8 @@
 		 * Подготовка формы для редактирования объекта (уже с id)
 		 * @return TakeEditTemplateCommand
 		 */
-		protected function prepairEditForm(IdentifiableObject $object, Form $form, HttpRequest $request) {
+		protected function prepairEditForm(IdentifiableObject $object, Form $form, HttpRequest $request)
+		{
 			FormUtils::object2form($object, $form);
 			return $this;
 		}
@@ -90,7 +92,8 @@
 		 * Подготовка формы для редактирования нового объекта (без id)
 		 * @return TakeEditTemplateCommand
 		 */
-		protected function prepairEditNewForm(IdentifiableObject $subject, Form $form, HttpRequest $request) {
+		protected function prepairEditNewForm(IdentifiableObject $subject, Form $form, HttpRequest $request)
+		{
 			return $this;
 		}
 
@@ -98,7 +101,8 @@
 		 * Импортирование/подготовка/доп.валидация формы перед сохранением объекта
 		 * @return TakeEditTemplateCommand
 		 */
-		protected function prepairFormTakeImport(IdentifiableObject $subject, Form $form, HttpRequest $request) {
+		protected function prepairFormTakeImport(IdentifiableObject $subject, Form $form, HttpRequest $request)
+		{
 			$form->importMore($request->getPost());
 			return $this;
 		}
@@ -109,7 +113,8 @@
 		 * @param IdentifiableObject $subject
 		 * @return IdentifiableObject
 		 */
-		protected function takeObject(Form $form, IdentifiableObject $subject) {
+		protected function takeObject(Form $form, IdentifiableObject $subject)
+		{
 			$subject = $this->prepairSubjectByForm($form, $subject);
 			if ($form->getValue('id')) {
 				$subject = $subject->dao()->merge($subject, false);
@@ -127,7 +132,8 @@
 		 * @param IdentifiableObject $subject
 		 * @return IdentifiableObject
 		 */
-		protected function prepairSubjectByForm(Form $form, IdentifiableObject $subject) {
+		protected function prepairSubjectByForm(Form $form, IdentifiableObject $subject)
+		{
 			FormUtils::form2object($form, $subject, true);
 			return $subject;
 		}
@@ -138,7 +144,8 @@
 		 * @param IdentifiableObject $subject
 		 * @return TakeEditTemplateCommand
 		 */
-		protected function postTakeActions(Form $form, IdentifiableObject $subject) {
+		protected function postTakeActions(Form $form, IdentifiableObject $subject)
+		{
 			return $this;
 		}
 
@@ -147,7 +154,8 @@
 		 * @param IdentifiableObject $subject
 		 * @return IdentifiableObject
 		 */
-		protected function fillNewId(IdentifiableObject $subject) {
+		protected function fillNewId(IdentifiableObject $subject)
+		{
 			return $subject->setId(
 				DBPool::getByDao($subject->dao())->obtainSequence(
 					$subject->dao()->getSequence()
@@ -162,14 +170,16 @@
 		 * @param HttpRequest $request
 		 * @return TakeEditTemplateCommand
 		 */
-		protected function prepairErrorsForm(Prototyped $subject, Form $form, HttpRequest $request) {
+		protected function prepairErrorsForm(Prototyped $subject, Form $form, HttpRequest $request)
+		{
 			return $this;
 		}
 
 		/**
 		 * @return Model
 		 */
-		protected function getModel(Prototyped $subject, Form $form) {
+		protected function getModel(Prototyped $subject, Form $form)
+		{
 			return Model::create();
 		}
 
@@ -177,18 +187,19 @@
 		 * Определяет edit или take сейчас будет выполняться
 		 * @return string
 		 */
-		protected function resolveActionForm(HttpRequest $request) {
+		protected function resolveActionForm(HttpRequest $request)
+		{
 			$actionList = array('edit', 'take');
 
-			$form = Form::create()
-				->add(
-					Primitive::plainChoice($this->actionMethod)
-						->setList($actionList)
-						->setDefault('edit')
-						->required()
-				)
-				->import($request->getGet())
-				->importMore($request->getPost());
+			$form = Form::create()->
+				add(
+					Primitive::plainChoice($this->actionMethod)->
+						setList($actionList)->
+						setDefault('edit')->
+						required()
+				)->
+				import($request->getGet())->
+				importMore($request->getPost());
 
 			if ($form->getErrors()) {
 				return 'edit';

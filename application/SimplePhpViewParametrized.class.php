@@ -68,7 +68,8 @@
 		 * @param string $value
 		 * @return string
 		 */
-		protected function escape($value/*,  sprintf params */) {
+		protected function escape($value/*,  sprintf params */)
+		{
 			if (func_num_args() > 1) {
 				$value = call_user_func_array('sprintf', func_get_args());
 			}

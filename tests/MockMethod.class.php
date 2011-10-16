@@ -17,7 +17,8 @@
 		/**
 		 * @return MockMethod
 		 */
-		public static function create($name) {
+		public static function create($name)
+		{
 			return new self($name);
 		}
 
@@ -25,7 +26,8 @@
 		 * @param integer $return
 		 * @return MockMethodAbstract
 		 */
-		public function setCallTimes($callTimes) {
+		public function setCallTimes($callTimes)
+		{
 			Assert::isPositiveInteger($callTimes);
 			$this->callTimes = $callTimes;
 			return $this;
@@ -35,19 +37,22 @@
 		 * @param integer $return
 		 * @return MockMethodAbstract
 		 */
-		public function dropCallTimes() {
+		public function dropCallTimes()
+		{
 			$this->callTimes = null;
 			return $this;
 		}
 
-		public function integrateToObject(IMockSpawnSupport $test, $mockObject) {
+		public function integrateToObject(IMockSpawnSupport $test, $mockObject)
+		{
 			$mockObject->
 				expects($this->spawnExpects($test))->
 				method($this->name)->
 				will($this->spawnReturn($test, $mockObject));
 		}
 
-		protected function spawnExpects(IMockSpawnSupport $test) {
+		protected function spawnExpects(IMockSpawnSupport $test)
+		{
 			if ($this->callTimes === null) {
 				return $test->getAny();
 			} elseif ($this->callTimes == 0) {

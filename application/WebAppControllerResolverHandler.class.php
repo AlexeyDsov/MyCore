@@ -28,7 +28,8 @@
 		/**
 		 * @return WebAppControllerResolverHandler
 		 */
-		public function run(InterceptingChain $chain) {
+		public function run(InterceptingChain $chain)
+		{
 			$request = $chain->getRequest();
 
 			if ($controllerName = $this->getControllerNameByArea($chain)) {

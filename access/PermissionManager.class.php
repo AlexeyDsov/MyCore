@@ -16,7 +16,8 @@
 		 * Статическое создание объекта класса
 		 * @return PermissionManager
 		 */
-		public static function create() {
+		public static function create()
+		{
 			return new self;
 		}
 
@@ -26,7 +27,8 @@
 		 * @param string $action
 		 * @return bool
 		 */
-		public function hasPermission(IPermissionUser $user, $action) {
+		public function hasPermission(IPermissionUser $user, $action)
+		{
 			$actionList = $user->getActionList();
 
 			return (array_search($action, $actionList) !== false);
