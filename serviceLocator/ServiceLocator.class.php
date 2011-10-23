@@ -26,11 +26,14 @@
 		 * @param string $className
 		 * @return object
 		 */
-		public function spawn($className)
+		public function spawn($className/*,  constructor params ..., ..., ...  */)
 		{
-			$object = new $className;
+			$reflectionClass = new ReflectionClass($className);
+			$constructorArgs = func_get_args();
+			array_shift($constructorArgs);
+			$object = $reflectionClass->newInstanceArgs($constructorArgs);
+			
 			return $this->implementSelf($object);
-			return $object;
 		}
 
 
