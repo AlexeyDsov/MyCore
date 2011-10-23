@@ -14,6 +14,8 @@
 
 		protected $className = null;
 		protected $methodList = array();
+		protected $mockMethodList = array();
+		protected $disableConstructor = false;
 
 		/**
 		 * @return MockCriteria
@@ -37,6 +39,26 @@
 		public function of($className)
 		{
 			$this->className = $className;
+			return $this;
+		}
+	
+		/**
+		 * @param array $methodList
+		 * @return MockCriteria 
+		 */
+		public function setMockMethodList(array $methodList)
+		{
+			$this->mockMethodList = $methodList;
+			return $this;
+		}
+
+		/**
+		 * @param type $isDisableConstructor
+		 * @return MockCriteria 
+		 */
+		public function setDisableConstructor($isDisableConstructor)
+		{
+			$this->disableConstructor = $isDisableConstructor;
 			return $this;
 		}
 
@@ -83,7 +105,10 @@
 		{
 			Assert::isNotNull($this->className, 'Class of Mock object must be setted');
 
-			$mockObject = $test->getMock($this->className);
+			$constructorArgs = func_get_args();
+			array_shift($constructorArgs);
+
+			$mockObject = $test->getMock($this->className, $this->mockMethodList, $constructorArgs, '', $this->disableConstructor);
 
 			foreach ($this->methodList as $method) {
 				if (is_array($method)) {
