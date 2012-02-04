@@ -151,7 +151,9 @@
 				? $options[ListMakerProperties::OPTION_OBJECT_LINK]
 				: $propertyName;
 			$property = ListMakerUtils::getPropertyByName($objectLink, $this->proto);
-			$propertyType = $property ? $property->getType() : null;
+			$propertyType = isset($options[ListMakerProperties::OPTION_PROPERTY_TYPE])
+				? $options[ListMakerProperties::OPTION_PROPERTY_TYPE]
+				: ($property ? $property->getType() : null);
 
 			$prmitiveList = array();
 			if (isset($options[ListMakerProperties::OPTION_FILTERABLE])) {

@@ -12,6 +12,7 @@
 
 	class ListMakerProperties
 	{
+		const OPTION_COLUMN = 'column';
 		const OPTION_ORDERING = 'ordering';
 		const OPTION_DEFAULT_ORDER = 'defaultOrder';
 		const OPTION_FILTERABLE = 'filterable';
@@ -30,8 +31,38 @@
 		const OPTION_FILTERABLE_ILIKE = 'ilike';
 		const OPTION_DESCRIPTION = 'description';
 		const OPTION_OBJECT_LINK = 'objectLink';
+		const OPTION_SQL_FUNCTION = 'sqlFunction';
+		const OPTION_VALUE_FUNCTION = 'valueFunction';
+		const OPTION_PROPERTY_TYPE = 'propertyType';
 
 		const ORDER_ASC = 'asc';
 		const ORDER_DESC = 'desc';
+		
+		private static $labelMapping = array(		
+			self::OPTION_FILTERABLE_EQ => '=',
+			self::OPTION_FILTERABLE_IN => 'IN',
+			self::OPTION_FILTERABLE_GT => '>',
+			self::OPTION_FILTERABLE_GTEQ => '>=',
+			self::OPTION_FILTERABLE_LT => '<',
+			self::OPTION_FILTERABLE_LTEQ => '<=',
+			self::OPTION_FILTERABLE_IS_NULL => 'is Null',
+			self::OPTION_FILTERABLE_IS_NOT_NULL => 'Not Null',
+			self::OPTION_FILTERABLE_IS_TRUE => 'True',
+			self::OPTION_FILTERABLE_IS_NOT_TRUE => 'Not True',
+			self::OPTION_FILTERABLE_IS_FALSE => 'False',
+			self::OPTION_FILTERABLE_IS_NOT_FALSE => 'Not False',
+			self::OPTION_FILTERABLE_ILIKE => 'ILIKE',
+		);
+		
+		/**
+		 * @param string $filterName
+		 * @return string
+		 */
+		public static function getFilterLabel($filterName) {
+			if (isset(self::$labelMapping[$filterName])) {
+				return self::$labelMapping[$filterName];
+	}
+			return $filterName;
+		}
 	}
 ?>

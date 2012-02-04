@@ -151,13 +151,15 @@
 				$objectLink = isset($options[ListMakerProperties::OPTION_OBJECT_LINK])
 					? $options[ListMakerProperties::OPTION_OBJECT_LINK]
 					: $propertyName;
-				$property = ListMakerUtils::getPropertyByName($objectLink, $this->proto);
+				$objectFunction = isset($options[ListMakerProperties::OPTION_SQL_FUNCTION])
+					? $options[ListMakerProperties::OPTION_SQL_FUNCTION]
+					: $objectLink;
 
 				if (isset($formData[$propertyName]['order'])) {
-					if ($objectLink == 'id') {
+					if ($propertyName == 'id') {
 						$hasIdSort = true;
 					}
-					$order = OrderBy::create($objectLink);
+					$order = OrderBy::create($objectFunction);
 					if (
 						isset($formData[$propertyName]['sort'])
 						&& $formData[$propertyName]['sort'] == ListMakerProperties::ORDER_DESC
@@ -203,10 +205,15 @@
 			$objectLink = isset($options[ListMakerProperties::OPTION_OBJECT_LINK])
 				? $options[ListMakerProperties::OPTION_OBJECT_LINK]
 				: $propertyName;
+			$objectFunction = isset($options[ListMakerProperties::OPTION_SQL_FUNCTION])
+				? $options[ListMakerProperties::OPTION_SQL_FUNCTION]
+				: $objectLink;
 			$property = ListMakerUtils::getPropertyByName($objectLink, $this->proto);
-			$propertyType = $property ? $property->getType() : null;
+			$propertyType = isset($options[ListMakerProperties::OPTION_PROPERTY_TYPE])
+				? $options[ListMakerProperties::OPTION_PROPERTY_TYPE]
+				: ($property ? $property->getType() : null);
 
-			if ($property === null) {
+			if ($propertyType === null) {
 				$errorMsg = "property {$propertyName} not exist for proto ".get_class($this->proto);
 				throw new WrongArgumentException($errorMsg);
 			}
@@ -218,17 +225,26 @@
 				foreach ($filterList as $filterName) {
 					if (isset($propertyData[$filterName])) {
 						$value = $propertyData[$filterName];
+						if (isset($options[ListMakerProperties::OPTION_VALUE_FUNCTION])) {
+							Assert::isInstance(
+								$function = $options[ListMakerProperties::OPTION_VALUE_FUNCTION],
+								'Closure',
+								"OPTION_VALUE_FUNCTION for [{$propertyName}][{$filterName}] must be Closure"
+							);
+							$value = $function($value, $filterName);
+						}
+
 						//@todo @hack
 						if ('date' == $propertyType) {
 							$value = $value['year'] . '-' . $value['month'] . '-' . $value['day'];
 						}
 
 						if (isset($this->binaryExpressionMapping[$filterName])) {
-							$criteria->add($this->makeExpressionBinary($objectLink, $filterName, $value));
+							$criteria->add($this->makeExpressionBinary($objectFunction, $filterName, $value));
 						} elseif (isset($this->postfixExpressionMapping[$filterName])) {
-							$criteria->add($this->makeExpressionTernary($objectLink, $filterName));
+							$criteria->add($this->makeExpressionTernary($objectFunction, $filterName));
 						} elseif ($filterName == ListMakerProperties::OPTION_FILTERABLE_IN) {
-							if ($inExpression = $this->makeExpressionIn($objectLink, $value)) {
+							if ($inExpression = $this->makeExpressionIn($objectFunction, $value)) {
 								$criteria->add($inExpression);
 							}
 						} else {
@@ -253,7 +269,11 @@
 				throw new UnimplementedFeatureException('Unkown binary filter: '.$filterName);
 			}
 			$logic = $this->binaryExpressionMapping[$filterName];
-			return new BinaryExpression($objectLink, DBValue::create($value), $logic);
+			return new BinaryExpression(
+				$objectLink,
+				$value instanceof DialectString ? $value : DBValue::create($value),
+				$logic
+			);
 		}
 
 		/**
