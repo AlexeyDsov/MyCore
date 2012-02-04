@@ -10,9 +10,19 @@
  *                                                                         *
  ***************************************************************************/
 
-	class SimplePhpViewParametrized extends SimplePhpView
+	class SimplePhpViewParametrized extends CustomPhpView
 	{
+		/**
+		 * @var Model
+		 */
+		protected $model = null;
 		protected $params = array();
+
+		public function render($model = null)
+		{
+			$this->model = $model;
+			return parent::render($model);
+		}
 
 		/**
 		 * @param string $name
@@ -61,6 +71,33 @@
 		{
 			Assert::isScalar($name);
 			return array_key_exists($name, $this->params);
+		}
+
+		/**
+		 * Отрисовывает подшаблон $templateName с добавлением дополнительных параметров из второго аргумента
+		 * @return null
+		 */
+		protected function template($templateName, array $params = array())
+		{
+			if (!empty($params)) {
+				$model = Model::create()->merge($this->model);
+				foreach ($params as $paramName => $paramValue) {
+					$model->set($paramName, $paramValue);
+				}
+				$this->partViewer->view($templateName, $model);
+			} else {
+				$this->partViewer->view($templateName);
+			}
+		}
+
+		/**
+		 * Сокращенный вызов подшаблона из шаблона
+		 * @param type $templateName
+		 * @param type $model
+		 */
+		protected function view($templateName, /* Model */ $model = null)
+		{
+			$this->partViewer->view($templateName, $model);
 		}
 
 		/**

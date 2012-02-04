@@ -23,6 +23,7 @@
 			'info' => 'infoProcess',
 			'edit' => 'editProcess',
 			'take' => 'takeProcess',
+			'drop' => 'dropProcess',
 		);
 		protected $defaultAction = 'info';
 
@@ -137,8 +138,66 @@
 				$this->model->
 					set('isNew', $isNew)->
 					set('infoObject', $subject)->
-					set('infoUrl', $this->getUrlInfo($subject));
+					set('infoUrl', $this->getUrlInfo($subject))->
+					set('closeDialog', $this->toCloseDialog($subject))
+					;
 				return $this->getMav('edit.success');
+			}
+
+			return $this->getMavRedirectByUrl($this->getUrlInfo($subject));
+		}
+
+		protected function dropProcess(HttpRequest $request)
+		{
+			$className = $this->getObjectName();
+			if (!$this->serviceLocator->get('linker')->isObjectSupported($className, 'drop')) {
+				throw new PermissionException('No permission for drop '.$className);
+			}
+
+			$proto = $this->getObjectProto();
+
+			$form = Form::create();
+			$proto->getPropertyByName('id')->fillForm($form);
+			$form->get('id')->required();
+			$form->import($request->getGet());
+
+			$subject = $form->getValue('id');
+
+			$confirmed = $request->hasGetVar('confirm');
+			
+			if (!$confirmed) {
+				$this->model->
+					set('infoObject', $subject)->
+					set('dropUrl', $this->getUrlDrop($subject, true));
+				return $this->getMav('drop.confirm');
+			}
+			
+			$command = $this->getDropCommand();
+			/* @var $command DropCommand */
+			$transaction = null;
+			if ($this->isTakeInTransaction()) {
+				$transaction = InnerTransaction::begin($subject->dao());
+			}
+
+			$mav = $command->run($subject, $form, $request);
+
+			if ($mav->getView() != EditorController::COMMAND_SUCCEEDED) {
+				if ($transaction) {
+					$transaction->rollback();
+				}
+				return $this->getEditMav($form, $subject, $mav->getModel());
+			}
+			
+			if ($transaction) {
+				$transaction->commit();
+			}
+
+			if ($this->serviceLocator->get('isAjax')) {
+				$this->model->
+					set('infoObject', $subject)->
+					set('infoUrl', $this->getUrlInfo($subject))->
+					set('id', $request->getGetVar('id'));
+				return $this->getMav('drop.success');
 			}
 
 			return $this->getMavRedirectByUrl($this->getUrlInfo($subject));
@@ -155,7 +214,13 @@
 				set('customEditFieldsData', $this->getCustomEditFieldsData($form, $subject))->
 				set('orderFunction', $this->getFunctionListOrder())->
 				set('infoUrl', $this->getUrlInfo($infoObject))->
-				set('takeUrl', $this->getUrlTake($infoObject));
+				set('takeUrl', $this->getUrlTake($infoObject))->
+				set('closeDialog', $this->toCloseDialog($infoObject))
+				;
+			$linker = $this->serviceLocator->get('linker');
+			if ($linker->isObjectSupported($infoObject, 'drop')) {
+				$this->model->set('dropUrl', $this->getUrlDrop($infoObject));
+			}
 
 			return $this->getMav('edit');
 		}
@@ -221,6 +286,16 @@
 		}
 
 		/**
+		 * Возвращает название комманды, реализующей удаление объекта
+		 * @return string
+		 */
+		protected function getDropCommandName()
+		{
+			return 'DropCommand';
+		}
+		
+		
+		/**
 		 * Создает и возвращает комманду для редактирования объекта
 		 * @return EditorCommand
 		 */
@@ -245,10 +320,19 @@
 			
 			return $command;
 		}
+
+		/**
+		 * Создает и возвращает комманду для редактирования объекта
+		 * @return DropCommand
+		 */
+		protected function getDropCommand()
+		{
+			return $this->serviceLocator->spawn($this->getDropCommandName());
+		}
 		
 		protected function getLogClassName()
 		{
-			return 'IngLog';
+			return 'BF3Log';
 		}
 
 		/**
@@ -285,7 +369,13 @@
 					'url' => $this->getUrlEdit($infoObject),
 				);
 			}
-			if ($linker->isObjectSupported('IngLog', 'info')) {
+			if ($linker->isObjectSupported($infoObject, 'drop')) {
+				$buttonList['Drop'] = array(
+					'window' => true,
+					'url' => $this->getUrlDrop($infoObject),
+				);
+			}
+			if ($linker->isObjectSupported('BF3Log', 'info')) {
 				$buttonList['Logs'] = array(
 					'window' => false,
 					'url' => $linker->getUrlLog($infoObject),
@@ -324,9 +414,24 @@
 		{
 			return $this->serviceLocator->get('linker')->getUrl($infoObject, array('action' => 'take'), 'edit');
 		}
+		
+		protected function getUrlDrop(IdentifiableObject $infoObject, $confirm = false)
+		{
+			$url = $this->serviceLocator->get('linker')->getUrl($infoObject, array('action' => 'drop'), 'drop');
+			if ($confirm) {
+				$url .= '&confirm=1';
+			}
+			return $url;
+		}
 
-		final protected function getEmptyFieldData() {
+		final protected function getEmptyFieldData()
+		{
 			return array('tpl' => 'Objects/SimpleObject/empty');
+		}
+		
+		protected function toCloseDialog(IdentifiableObject $subject)
+		{
+			return false;
 		}
 
 		/**

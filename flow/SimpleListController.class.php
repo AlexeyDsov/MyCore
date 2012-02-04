@@ -51,7 +51,9 @@
 			$propertyList = $this->getPropertyList();
 			$proto = $this->getProto();
 
-			$form = ListMakerFormBuilder::create($proto, $propertyList)->buildForm();
+			$form = ListMakerFormBuilder::create($proto, $propertyList)->
+				setDefaultLimit($this->getPageLimit())->
+				buildForm();
 			$this->model->
 				set('form', $form)->
 				set('propertyList', $propertyList)->
@@ -67,7 +69,7 @@
 		**/
 		protected function listProcess(HttpRequest $request)
 		{
-			$this->fillModel($request);
+			$this->searchProcess($request);
 			return $this->getMav('list');
 		}
 
@@ -77,13 +79,16 @@
 		 * @param HttpRequest $request
 		 * @return Model
 		 */
-		protected function fillModel(HttpRequest $request)
+		protected function searchProcess(HttpRequest $request)
 		{
 			$propertyList = $this->getPropertyList();
 			$proto = $this->getProto();
 
-			$form = ListMakerFormBuilder::create($proto, $propertyList)->buildForm();
-			$form->import($request->getGet());
+			$form = ListMakerFormBuilder::create($proto, $propertyList)->
+				setDefaultLimit($this->getPageLimit())->
+				buildForm();
+			$this->applySearchRules($form);
+			$form->import($request->getGet())->checkRules();
 
 			$this->model->
 				set('form', $form)->
@@ -95,14 +100,17 @@
 			}
 
 			$constructor = ListMakerConstructor::create($proto, $propertyList);
-			$queryResult = $constructor->getResult($form);
+			$queryResult = $constructor->getResult($form, $this->getPreparedCriteria());
 
 			$this->model->
 				set('limitName', $constructor->getLimitName())->
 				set('offsetName', $constructor->getOffsetName())->
 				set('queryResult', $queryResult)->
 				set('pagerModel', $this->makePagerModel($queryResult, $form))->
-				set('columnModel', $this->makeColumnModel($form, $propertyList));
+				set('columnModel', $this->makeColumnModel($form, $propertyList))->
+				set('showInfo', $this->showInfo());
+
+			$this->model->get('listHeaderModel')->set('hideFilters', true);
 
 			return $this->model;
 		}
@@ -118,7 +126,9 @@
 			return Model::create()->
 				set('form', $form)->
 				set('propertyList', $propertyList)->
-				set('urlParams', $this->getUrlParams());
+				set('proto', $this->getProto())->
+				set('urlParams', $this->getUrlParams())->
+				set('hideFilters', false);
 		}
 
 		/**
@@ -196,6 +206,46 @@
 		 */
 		protected function getViewPath()
 		{
-			return 'Objects/'.$this->getObjectName();
+			return 'Objects/'.($this->isStandartView() ? 'SimpleObject' : $this->getObjectName());
+		}
+		
+		/**
+		 * @return null|Criteria
+		 */
+		protected function getPreparedCriteria()
+		{
+			return null;
+		}
+		
+		/**
+		 * @param Form $form 
+		 */
+		protected function applySearchRules(Form $form)
+		{
+			/* implement in child if needed */
+		}
+		
+		/**
+		 * @return boolean 
+		 */
+		protected function isStandartView()
+		{
+			return true;
+		}
+		
+		/**
+		 * @return boolean 
+		 */
+		protected function showInfo()
+		{
+			return true;
+		}
+		
+		/**
+		 * @return int 
+		 */
+		protected function getPageLimit()
+		{
+			return 20;
 		}
 	}

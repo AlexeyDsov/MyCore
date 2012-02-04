@@ -12,6 +12,12 @@
 	class WebAppViewHandler implements InterceptingChainHandler
 	{
 		/**
+		 * Templater name
+		 * @var string
+		 */
+		const VIEW_CLASS_NAME_DEFAULT = 'SimplePhpView';
+		
+		/**
 		 * HTTP заголовки ответа
 		 * @var array<assoc>
 		 */
@@ -87,6 +93,15 @@
 		protected function updateNonRedirectModel(InterceptingChain $chain, Model $model)
 		{
 			return $this;
+		}
+
+		/**
+		 * Getting class' name for template
+		 * @return WebAppViewHandler
+		 */
+		protected function getViewClassName()
+		{
+			return self::VIEW_CLASS_NAME_DEFAULT;
 		}
 	}
 ?>
