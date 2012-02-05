@@ -304,18 +304,9 @@
 			$command = $this->serviceLocator->spawn($this->getCommandName());
 			
 			if ($command instanceof TakeEditToolkitCommand) {
-				$serviceLocator = $this->serviceLocator;
-				$command->setLogCallback(
-					function(array $logData, IdentifiableObject $logObject) use ($serviceLocator) {
-						$log = IngLog::createByObject(
-							$logData,
-							$logObject,
-							$serviceLocator->get('admin')->getUser()
-						);
-
-						$log->dao()->add($log);
-					}
-				);
+				if ($callbackLog = $this->getCallbackLog()) {
+					$command->setLogCallback($callbackLog);
+				}
 			}
 			
 			return $command;
@@ -432,6 +423,10 @@
 		protected function toCloseDialog(IdentifiableObject $subject)
 		{
 			return false;
+		}
+		
+		protected function getCallbackLog() {
+			return null;
 		}
 
 		/**
