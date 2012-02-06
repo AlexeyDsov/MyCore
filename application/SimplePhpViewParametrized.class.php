@@ -97,6 +97,11 @@
 		 */
 		protected function view($templateName, /* Model */ $model = null)
 		{
+			if ($model && is_array($model)) {
+				$model = $this->array2Model($model);
+			} elseif ($model) {
+				Assert::isInstance($model, 'Model', '$model must be instance of Model or array or null');
+			}
 			$this->partViewer->view($templateName, $model);
 		}
 
@@ -111,6 +116,19 @@
 				$value = call_user_func_array('sprintf', func_get_args());
 			}
 			return htmlspecialchars($value);
+		}
+		
+		/**
+		 * @param array $array
+		 * @return Model
+		 */
+		private function array2Model(array $array) {
+			$model = Model::create();
+			foreach ($array as $key => $value) {
+				$model->set($key, $value);
+			}
+			
+			return $model;
 		}
 	}
 ?>
