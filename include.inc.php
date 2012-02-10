@@ -18,6 +18,7 @@ ini_set(
 	. join(
 		PATH_SEPARATOR,
 		array(
+			PATH_CORE.'EntityProto',
 			PATH_CORE.'ListMakerHelper',
 			PATH_CORE.'access',
 			PATH_CORE.'application',

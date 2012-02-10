@@ -39,7 +39,6 @@
 				//действие take - заполняем форму из реквеста,
 				//если ошибок нет - переносим данные в объект и сохраняем его
 				$this->prepairFormTakeImport($subject, $form, $request);
-				$form->checkRules();
 				if (!$form->getValue('id')) {
 					$form->markGood('id');
 				}
@@ -103,7 +102,7 @@
 		 */
 		protected function prepairFormTakeImport(IdentifiableObject $subject, Form $form, HttpRequest $request)
 		{
-			$form->importMore($request->getPost());
+			$form->importMore($request->getPost())->checkRules();
 			return $this;
 		}
 

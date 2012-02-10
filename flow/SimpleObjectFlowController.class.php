@@ -45,7 +45,7 @@
 		protected function infoProcess(HttpRequest $request)
 		{
 			$className = $this->getObjectName();
-			if (!$this->serviceLocator->get('linker')->isObjectSupported($className, 'info')) {
+			if (!$this->serviceLocator->get('linker')->isObjectSupported($className, $this->getInfoAction())) {
 				throw new PermissionException('No permission for info '.$className);
 			}
 
@@ -78,7 +78,7 @@
 		protected function editProcess(HttpRequest $request)
 		{
 			$className = $this->getObjectName();
-			if (!$this->serviceLocator->get('linker')->isObjectSupported($className, 'edit')) {
+			if (!$this->serviceLocator->get('linker')->isObjectSupported($className, $this->getEditAction())) {
 				throw new PermissionException('No permission for edit '.$className);
 			}
 
@@ -105,7 +105,7 @@
 		protected function takeProcess(HttpRequest $request)
 		{
 			$className = $this->getObjectName();
-			if (!$this->serviceLocator->get('linker')->isObjectSupported($className, 'edit')) {
+			if (!$this->serviceLocator->get('linker')->isObjectSupported($className, $this->getEditAction())) {
 				throw new PermissionException('No permission for edit '.$className);
 			}
 
@@ -150,7 +150,7 @@
 		protected function dropProcess(HttpRequest $request)
 		{
 			$className = $this->getObjectName();
-			if (!$this->serviceLocator->get('linker')->isObjectSupported($className, 'drop')) {
+			if (!$this->serviceLocator->get('linker')->isObjectSupported($className, $this->getDropAction())) {
 				throw new PermissionException('No permission for drop '.$className);
 			}
 
@@ -218,7 +218,7 @@
 				set('closeDialog', $this->toCloseDialog($infoObject))
 				;
 			$linker = $this->serviceLocator->get('linker');
-			if ($linker->isObjectSupported($infoObject, 'drop')) {
+			if ($linker->isObjectSupported($infoObject, $this->getDropAction())) {
 				$this->model->set('dropUrl', $this->getUrlDrop($infoObject));
 			}
 
@@ -354,19 +354,19 @@
 			$linker = $this->serviceLocator->get('linker');
 			/* @var $linker ToolkitLinkUtils */
 			$buttonList = array();
-			if ($linker->isObjectSupported($infoObject, 'edit')) {
+			if ($linker->isObjectSupported($infoObject, $this->getEditAction())) {
 				$buttonList['Edit'] = array(
 					'window' => true,
 					'url' => $this->getUrlEdit($infoObject),
 				);
 			}
-			if ($linker->isObjectSupported($infoObject, 'drop')) {
+			if ($linker->isObjectSupported($infoObject, $this->getDropAction())) {
 				$buttonList['Drop'] = array(
 					'window' => true,
 					'url' => $this->getUrlDrop($infoObject),
 				);
 			}
-			if ($linker->isObjectSupported('BF3Log', 'info')) {
+			if ($linker->isObjectSupported('BF3Log', $this->getInfoAction())) {
 				$buttonList['Logs'] = array(
 					'window' => false,
 					'url' => $linker->getUrlLog($infoObject),
@@ -383,7 +383,7 @@
 		 */
 		protected function getUrlInfo(IdentifiableObject $infoObject)
 		{
-			return $this->serviceLocator->get('linker')->getUrl($infoObject);
+			return $this->serviceLocator->get('linker')->getUrl($infoObject, array(), $this->getInfoAction());
 		}
 
 		/**
@@ -393,7 +393,7 @@
 		 */
 		protected function getUrlEdit(IdentifiableObject $infoObject)
 		{
-			return $this->serviceLocator->get('linker')->getUrl($infoObject, array('action' => 'edit'), 'edit');
+			return $this->serviceLocator->get('linker')->getUrl($infoObject, array('action' => 'edit'), $this->getEditAction());
 		}
 
 		/**
@@ -403,12 +403,12 @@
 		 */
 		protected function getUrlTake(IdentifiableObject $infoObject)
 		{
-			return $this->serviceLocator->get('linker')->getUrl($infoObject, array('action' => 'take'), 'edit');
+			return $this->serviceLocator->get('linker')->getUrl($infoObject, array('action' => 'take'), $this->getEditAction());
 		}
 		
 		protected function getUrlDrop(IdentifiableObject $infoObject, $confirm = false)
 		{
-			$url = $this->serviceLocator->get('linker')->getUrl($infoObject, array('action' => 'drop'), 'drop');
+			$url = $this->serviceLocator->get('linker')->getUrl($infoObject, array('action' => 'drop'), $this->getDropAction());
 			if ($confirm) {
 				$url .= '&confirm=1';
 			}
@@ -427,6 +427,18 @@
 		
 		protected function getCallbackLog() {
 			return null;
+		}
+		
+		protected function getInfoAction() {
+			return 'info';
+		}
+		
+		protected function getEditAction() {
+			return 'edit';
+		}
+		
+		protected function getDropAction() {
+			return 'drop';
 		}
 
 		/**
