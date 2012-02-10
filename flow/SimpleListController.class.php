@@ -31,6 +31,15 @@
 			if (!$this->serviceLocator->get('linker')->isObjectSupported($className, 'info')) {
 				throw new PermissionException('No permission for info '.$className);
 			}
+			
+			$showAddButton = $this->showAddButton()
+				&& $this->serviceLocator->get('linker')->isObjectSupported($this->getObjectName(), 'edit');
+			
+			$this->model->set('showAddButton', $showAddButton);
+			if ($showAddButton) {
+				$addUrl = $this->serviceLocator->get('linker')->getUrl($className, array('action' => 'edit'), 'edit');
+				$this->model->set('addButtonUrl', $addUrl);
+			}
 
 			return $this->resolveAction($request);
 		}
@@ -54,6 +63,7 @@
 			$form = ListMakerFormBuilder::create($proto, $propertyList)->
 				setDefaultLimit($this->getPageLimit())->
 				buildForm();
+			
 			$this->model->
 				set('form', $form)->
 				set('propertyList', $propertyList)->
@@ -231,6 +241,11 @@
 		protected function isStandartView()
 		{
 			return true;
+		}
+		
+		protected function showAddButton()
+		{
+			return false;
 		}
 		
 		/**
