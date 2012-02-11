@@ -218,9 +218,9 @@
 				case 'float':
 					return Primitive::float($filterName);
 				case 'timestamp':
-					return Primitive::timestamp($filterName);
+					return Primitive::timestamp($filterName)->setSingle();
 				case 'date':
-					return Primitive::date($filterName);
+					return Primitive::date($filterName)->setSingle();
 				case 'string':
 				case 'scalarIdentifier':
 					return Primitive::string($filterName);

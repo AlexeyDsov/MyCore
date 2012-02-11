@@ -234,11 +234,6 @@
 							$value = $function($value, $filterName);
 						}
 
-						//@todo @hack
-						if ('date' == $propertyType) {
-							$value = $value['year'] . '-' . $value['month'] . '-' . $value['day'];
-						}
-
 						if (isset($this->binaryExpressionMapping[$filterName])) {
 							$criteria->add($this->makeExpressionBinary($objectFunction, $filterName, $value));
 						} elseif (isset($this->postfixExpressionMapping[$filterName])) {
