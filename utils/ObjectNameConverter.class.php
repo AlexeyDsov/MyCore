@@ -18,7 +18,7 @@
 		 */
 		public function get(IdentifiableObject $object) {
 			if ($object instanceof NamedObject) {
-				return "{{$object->getName()}} [{$object->getId()}]";
+				return "{$object->getName()} [{$object->getId()}]";
 			} elseif ($object instanceof Enumeration) {
 				return "{$object->getName()} [{$object->getId()}]";
 			}

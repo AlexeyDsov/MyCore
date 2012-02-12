@@ -39,6 +39,7 @@
 			if ($showAddButton) {
 				$addUrl = $this->serviceLocator->get('linker')->getUrl($className, array('action' => 'edit'), 'edit');
 				$this->model->set('addButtonUrl', $addUrl);
+				$this->model->set('addButtonDialogId', $className);
 			}
 
 			return $this->resolveAction($request);

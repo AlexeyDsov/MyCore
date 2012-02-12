@@ -146,7 +146,7 @@
 				$lightMeta = $prototype->proto()->getPropertyByName($path);
 				if ($lightMeta->getClassName() === null || $path == 'id') {
 					$prototype->{$lightMeta->getSetter()}(null);
-				} else {
+				} elseif ($lightMeta->getRelationId() == MetaRelation::ONE_TO_ONE) {
 					$prototype->{$lightMeta->getDropper()}();
 				}
 			} elseif (($dpos = mb_strpos($path, ':')) !== false) {
