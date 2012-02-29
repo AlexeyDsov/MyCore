@@ -32,9 +32,7 @@
 				throw new PermissionException('No permission for info '.$className);
 			}
 			
-			$showAddButton = $this->showAddButton()
-				&& $this->serviceLocator->get('linker')->isObjectSupported($this->getObjectName(), 'edit');
-			
+			$showAddButton = $this->serviceLocator->get('linker')->isObjectSupported($this->getObjectName(), 'add');
 			$this->model->set('showAddButton', $showAddButton);
 			if ($showAddButton) {
 				$addUrl = $this->serviceLocator->get('linker')->getUrl($className, array('action' => 'edit'), 'edit');
@@ -242,11 +240,6 @@
 		protected function isStandartView()
 		{
 			return true;
-		}
-		
-		protected function showAddButton()
-		{
-			return false;
 		}
 		
 		/**

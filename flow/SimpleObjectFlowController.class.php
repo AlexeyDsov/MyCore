@@ -86,7 +86,7 @@
 			$mav = $command->run($subject, $form, $request);
 			
 			$accessObject = $form->getValue('id') ?: $this->getObjectName();
-			if (!$this->serviceLocator->get('linker')->isObjectSupported($accessObject, $this->getEditAction())) {
+			if (!$this->serviceLocator->get('linker')->isObjectSupported($accessObject, $this->getEditAction($accessObject))) {
 				throw new PermissionException('No permission for edit '.$this->getObjectName());
 			}
 
@@ -111,7 +111,7 @@
 			}
 			
 			$editObject = $form->getValue('id') ?: $this->getObjectName();
-			if (!$this->serviceLocator->get('linker')->isObjectSupported($editObject, $this->getEditAction())) {
+			if (!$this->serviceLocator->get('linker')->isObjectSupported($editObject, $this->getEditAction($editObject))) {
 				throw new PermissionException('No permission for edit '.$this->getObjectName());
 			}
 
@@ -363,7 +363,7 @@
 			$linker = $this->serviceLocator->get('linker');
 			/* @var $linker ToolkitLinkUtils */
 			$buttonList = array();
-			if ($linker->isObjectSupported($infoObject, $this->getEditAction())) {
+			if ($linker->isObjectSupported($infoObject, $this->getEditAction($infoObject))) {
 				$buttonList['Edit'] = array(
 					'window' => true,
 					'url' => $this->getUrlEdit($infoObject),
@@ -402,7 +402,7 @@
 		 */
 		protected function getUrlEdit(IdentifiableObject $infoObject)
 		{
-			return $this->serviceLocator->get('linker')->getUrl($infoObject, array('action' => 'edit'), $this->getEditAction());
+			return $this->serviceLocator->get('linker')->getUrl($infoObject, array('action' => 'edit'), $this->getEditAction($infoObject));
 		}
 
 		/**
@@ -412,7 +412,7 @@
 		 */
 		protected function getUrlTake(IdentifiableObject $infoObject)
 		{
-			return $this->serviceLocator->get('linker')->getUrl($infoObject, array('action' => 'take'), $this->getEditAction());
+			return $this->serviceLocator->get('linker')->getUrl($infoObject, array('action' => 'take'), $this->getEditAction($infoObject));
 		}
 		
 		protected function getUrlDrop(IdentifiableObject $infoObject, $confirm = false)
@@ -442,8 +442,8 @@
 			return 'info';
 		}
 		
-		protected function getEditAction() {
-			return 'edit';
+		protected function getEditAction($object) {
+			return is_object($object) ? 'edit' : 'add';
 		}
 		
 		protected function getDropAction() {
