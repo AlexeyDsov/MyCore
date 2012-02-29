@@ -44,21 +44,20 @@
 		**/
 		protected function infoProcess(HttpRequest $request)
 		{
-			$className = $this->getObjectName();
-			if (!$this->serviceLocator->get('linker')->isObjectSupported($className, $this->getInfoAction())) {
-				throw new PermissionException('No permission for info '.$className);
-			}
-
 			$proto = $this->getObjectProto();
 
 			$form = Form::create();
 			$proto->getPropertyByName('id')->fillForm($form);
 			$form->get('id')->required();
 
-			$form->import($request->getGet())->importMore($request->getPost());
+			$form->import($request->getGet());
 
 			if ($form->getErrors()) {
 				return $this->getMav('index', 'NotFound');
+			}
+			
+			if (!$this->serviceLocator->get('linker')->isObjectSupported($form->getValue('id'), $this->getInfoAction())) {
+				throw new PermissionException('No permission for info '.$this->getObjectName());
 			}
 
 			$infoObject = $form->getValue('id');
@@ -77,11 +76,6 @@
 		**/
 		protected function editProcess(HttpRequest $request)
 		{
-			$className = $this->getObjectName();
-			if (!$this->serviceLocator->get('linker')->isObjectSupported($className, $this->getEditAction())) {
-				throw new PermissionException('No permission for edit '.$className);
-			}
-
 			$proto = $this->getObjectProto();
 
 			$form = $proto->makeForm();
@@ -90,6 +84,11 @@
 			$command = $this->getCommand();
 			/* @var $command EditorCommand */
 			$mav = $command->run($subject, $form, $request);
+			
+			$accessObject = $form->getValue('id') ?: $this->getObjectName();
+			if (!$this->serviceLocator->get('linker')->isObjectSupported($accessObject, $this->getEditAction())) {
+				throw new PermissionException('No permission for edit '.$this->getObjectName());
+			}
 
 			return $this->getEditMav($form, $subject, $mav->getModel());
 		}
@@ -104,15 +103,17 @@
 		**/
 		protected function takeProcess(HttpRequest $request)
 		{
-			$className = $this->getObjectName();
-			if (!$this->serviceLocator->get('linker')->isObjectSupported($className, $this->getEditAction())) {
-				throw new PermissionException('No permission for edit '.$className);
-			}
-
 			$proto = $this->getObjectProto();
-
 			$form = $proto->makeForm();
 			$subject = ClassUtils::callStaticMethod("{$this->getObjectName()}::create");
+			if ($request->hasGetVar('id')) {
+				$form->importOne('id', $request->getGet());
+			}
+			
+			$editObject = $form->getValue('id') ?: $this->getObjectName();
+			if (!$this->serviceLocator->get('linker')->isObjectSupported($editObject, $this->getEditAction())) {
+				throw new PermissionException('No permission for edit '.$this->getObjectName());
+			}
 
 			$command = $this->getCommand();
 			/* @var $command EditorCommand */
@@ -149,11 +150,6 @@
 
 		protected function dropProcess(HttpRequest $request)
 		{
-			$className = $this->getObjectName();
-			if (!$this->serviceLocator->get('linker')->isObjectSupported($className, $this->getDropAction())) {
-				throw new PermissionException('No permission for drop '.$className);
-			}
-
 			$proto = $this->getObjectProto();
 
 			$form = Form::create();
@@ -161,7 +157,13 @@
 			$form->get('id')->required();
 			$form->import($request->getGet());
 
-			$subject = $form->getValue('id');
+			if (!($subject = $form->getValue('id'))) {
+				return $this->getMav('drop.success');
+			}
+			
+			if (!$this->serviceLocator->get('linker')->isObjectSupported($subject, $this->getDropAction())) {
+				throw new PermissionException('No permission for drop '.$className);
+			}
 
 			$confirmed = $request->hasGetVar('confirm');
 			
@@ -176,21 +178,28 @@
 			/* @var $command DropCommand */
 			$transaction = null;
 			if ($this->isTakeInTransaction()) {
-				$transaction = InnerTransaction::begin($subject->dao());
+//				$transaction = InnerTransaction::begin($subject->dao());
+				$db = DBPool::getByDao($subject->dao())->begin();
 			}
 
 			$mav = $command->run($subject, $form, $request);
 
 			if ($mav->getView() != EditorController::COMMAND_SUCCEEDED) {
-				if ($transaction) {
-					$transaction->rollback();
+				if (isset($db)) {
+					$db->rollback();
 				}
+//				if ($transaction) {
+//					$transaction->rollback();
+//				}
 				return $this->getEditMav($form, $subject, $mav->getModel());
 			}
 			
-			if ($transaction) {
-				$transaction->commit();
+			if (isset($db)) {
+				$db->commit();
 			}
+//			if ($transaction) {
+//				$transaction->commit();
+//			}
 
 			if ($this->serviceLocator->get('isAjax')) {
 				$this->model->

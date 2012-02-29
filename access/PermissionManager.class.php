@@ -25,12 +25,37 @@
 		 * Возвращает признак
 		 * @param IPermissionUser $user
 		 * @param string $action
+		 * @param mixed $object can be classname or IdentifiableObject
 		 * @return bool
 		 */
-		public function hasPermission(IPermissionUser $user, $action)
+		public function hasPermission(IPermissionUser $user, $method, $object)
 		{
+			return $this->hasPermissionToClass($user, $method, $object);
+		}
+		
+		public function hasPermissionToClass(IPermissionUser $user, $method, $object) {
+			$action = $this->getObjectName($object).'.'.$method;
 			$actionList = $user->getActionList();
-
-			return (array_search($action, $actionList) !== false);
+			return array_search($action, $actionList) !== false;
+		}
+		
+		/**
+		 * @param mixed $object string|object
+		 */
+		final public function getObjectName($object)
+		{
+			Assert::isTrue(is_object($object) || is_string($object), '$object is not an object or string');
+			if (is_object($object)) {
+				Assert::isInstance($object, 'IdentifiableObject', '$object is not IdentifiableObject');
+			}
+			
+			return $this->convertObjectName(is_object($object) ? get_class($object) : $object);
+		}
+		
+		/**
+		 * @param string $objectName 
+		 */
+		protected function convertObjectName($objectName) {
+			return $objectName;
 		}
 	}
