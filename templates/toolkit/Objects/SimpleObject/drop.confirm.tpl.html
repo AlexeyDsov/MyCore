@@ -1,0 +1,17 @@
+<? $partViewer->view('header'); ?>
+Drop object?
+<?php
+	$dialogName = $this->get('linker')->getDialogName($infoObject);
+?>	
+<? if ($this->get('isAjax') && $infoObject) { ?>
+	<script type="text/javascript">
+		$('#<?=$dialogName?>').dialog('option', {
+			title: "Dropping object",
+			buttons: {
+				Drop: function() {DialogController.spawnByUrl('<?=$dropUrl?>', '<?=$dialogName?>');},
+				Cancel: function() {$(this).dialog('close');}
+			}
+		});
+	</script>
+<? } ?>
+<? $partViewer->view('footer'); ?>

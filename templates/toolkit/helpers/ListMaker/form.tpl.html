@@ -1,0 +1,41 @@
+<?
+/* @var $proto AbstractProtoClass */
+/* @var $propertyList array */
+/* @var $urlParams array */
+/* @var $form Form */
+if (!isset($postfix)) {
+	$postfix = time().md5(microtime());
+}
+?>
+
+<form
+	class="js-pjax"
+	id="listForm<?=$postfix?>"
+	method="GET"
+	action="<?=PATH_WEB_URL?>"
+>
+	<? foreach ($urlParams as $param => $value) { ?>
+		<input type="hidden" name="<?=$param?>" value="<?=$this->escape($value)?>" />
+	<? }
+	$propertyData = array('postfix' => $postfix);
+	foreach ($propertyList as $propertyName => $options) {
+		if (
+			isset($options[ListMakerProperties::OPTION_FILTERABLE])
+			&& !empty($options[ListMakerProperties::OPTION_FILTERABLE])
+		) {
+			$this->template('helpers/ListMaker/property', $propertyData + array('propertyName' => $propertyName));
+		}
+	}
+	?>
+	<input type="button" value="Hide" name="_hider" onclick="return Application.switchFilters(this, $('#listForm<?=$postfix?>')); return false;" />
+	
+	<? if ($hideFilters) { ?>
+		<script>
+			$(document).ready(
+				function(){
+				$('#listForm<?=$postfix?>').find('[name=_hider]').click();
+			});
+		</script>
+	<? } ?>
+	<input type="submit" value="Search"/>
+</form>
