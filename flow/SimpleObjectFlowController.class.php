@@ -36,6 +36,8 @@
 		{
 			return $this->resolveAction($request);
 		}
+		
+		abstract protected function getLogClassName();
 
 		/**
 		 * Возвращает модель для отображения информации об объекте
@@ -329,11 +331,6 @@
 		{
 			return $this->serviceLocator->spawn($this->getDropCommandName());
 		}
-		
-		protected function getLogClassName()
-		{
-			return 'BF3Log';
-		}
 
 		/**
 		 * Признак необходимости выполнять комманду в транзакции
@@ -375,11 +372,14 @@
 					'url' => $this->getUrlDrop($infoObject),
 				);
 			}
-			if ($linker->isObjectSupported('BF3Log', $this->getInfoAction())) {
-				$buttonList['Logs'] = array(
-					'window' => false,
-					'url' => $linker->getUrlLog($infoObject),
-				);
+			
+			if ($logClass = $this->getLogClassName()) {
+				if ($linker->isObjectSupported($this->getLogClassName(), $this->getInfoAction())) {
+					$buttonList['Logs'] = array(
+						'window' => false,
+						'url' => $linker->getUrlLog($infoObject),
+					);
+				}
 			}
 
 			return $buttonList;
