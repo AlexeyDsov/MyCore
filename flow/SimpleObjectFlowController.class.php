@@ -36,8 +36,6 @@
 		{
 			return $this->resolveAction($request);
 		}
-		
-		abstract protected function getLogClassName();
 
 		/**
 		 * Возвращает модель для отображения информации об объекте
@@ -383,6 +381,10 @@
 			}
 
 			return $buttonList;
+		}
+		
+		protected function getLogClassName() {
+			return null;
 		}
 
 		/**

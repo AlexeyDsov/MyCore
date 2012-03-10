@@ -12,12 +12,23 @@
 
 	class WebAppViewHandlerToolkit extends WebAppViewHandler
 	{
+		private $authorisatorName = null;
+		
 		/**
 		 * @return WebAppViewHandlerToolkit
 		 */
 		public static function create()
 		{
 			return new self();
+		}
+		
+		/**
+		 * @param string $authorisatorName
+		 * @return WebAppViewHandlerToolkit 
+		 */
+		public function setAuthorisatorName($authorisatorName) {
+			$this->authorisatorName = $authorisatorName;
+			return $this;
 		}
 
 		/**
@@ -41,7 +52,6 @@
 				set('nameConverter', $chain->getServiceLocator()->spawn($this->getNameConverterClass()));
 			
 			if (!$isAjax && ($menuList = $this->getMenuList($chain))) {
-				
 				$resolver->set('menuList', $menuList);
 			}
 			
@@ -55,7 +65,7 @@
 		protected function getMenuList(InterceptingChain $chain)
 		{
 			$serviceLocator = $chain->getVar('serviceLocator');
-			$user = $serviceLocator->get('admin')->getUser();
+			$user = $serviceLocator->get($this->authorisatorName)->getUser();
 
 			if ($user) {
 				return $serviceLocator->spawn($this->getMenuContructor())->
