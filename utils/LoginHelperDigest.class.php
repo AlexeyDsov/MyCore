@@ -61,6 +61,9 @@
 		public function authRequest() {
 			if (!$this->authorisator->getUser()) {
 				$realm = ClassUtils::callStaticMethod("{$this->className}::getRealm");
+				if (!$this->session->isStarted()) {
+					$this->session->start();
+				}
 				$this->session->assign($this->getLoginKeyParamName(), $loginKey = uniqid());
 				
 				$params = array(
@@ -84,7 +87,10 @@
 				$user->dao()->merge($user->setLoginKey(null));
 				$this->authorisator->dropUser();
 			}
-			$this->session->assign($this->getLoginKeyParamName(), null);
+			
+			if ($this->session->isStarted()) {
+				$this->session->assign($this->getLoginKeyParamName(), null);
+			}
 		}
 		
 		/**
@@ -108,6 +114,9 @@
 		 * @return ILoginUserDigest
 		 */
 		public function findUser(HttpRequest $request) {
+			if (!$this->session->isStarted()) {
+				return null;
+			}
 			if (!($digestParams = $this->parseDigestAuthResponse($request))) {
 				return null;
 			}

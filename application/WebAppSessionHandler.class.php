@@ -12,7 +12,7 @@
 	class WebAppSessionHandler implements InterceptingChainHandler
 	{
 		protected $sessionName		= null;
-		protected $cookiePath		= '/';
+		protected $cookiePath		= null;
 		protected $cookieDomain		= null;
 		protected $cookieTime		= 0;
 
