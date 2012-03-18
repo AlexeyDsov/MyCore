@@ -54,6 +54,27 @@ if ($this->get('isAjax')) {
 					return false;
 				});
 			}
+			if (!widgetHeader.find('.ui-dialog-titlebar-minimize').length) {
+				var minimizeHtml = '<a href="#" class="ui-dialog-titlebar-minimize ui-corner-all" role="button">'
+					+ '<span class="ui-icon ui-icon-minus">minimize</span>'
+					+ '</a>';
+				widgetHeader.find('.ui-dialog-titlebar-close').before(minimizeHtml);
+				var hidden = false;
+				var widgetHeight = 0;
+				widgetHeader.find('.ui-dialog-titlebar-minimize').click(function() {
+					if (hidden) {
+						$(widget).height(widgetHeight);
+						$($(this).parents('.ui-widget-header').get(0)).nextAll().show();
+						hidden = false;
+					} else {
+						widgetHeight = $(widget).height();
+						$($(this).parents('.ui-widget-header').get(0)).nextAll().hide();
+						$(widget).height(50);
+						hidden = true;
+					}
+					return false;
+				});
+			}
 		});
 	</script>
 	<?php
