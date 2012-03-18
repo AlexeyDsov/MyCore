@@ -74,7 +74,8 @@
 		 */
 		private function dropAllTables()
 		{
-			foreach ($this->schema->getTableNames() as $name) {
+			foreach ($this->schema->getTables() as $name => $table) {
+				/* @var $table DBTable */
 				try {
 					$this->db->queryRaw(
 						OSQL::dropTable($name, true)->toDialectString(
