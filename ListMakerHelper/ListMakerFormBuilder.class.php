@@ -228,7 +228,7 @@
 					$errorMsg = "Для propertyType 'boolean' операции сравнения невозможны";
 					throw new UnimplementedFeatureException($errorMsg);
 				default:
-					$errorMsg = "С данным типом LightMetaProperty не описана работа: {$propertyType}";
+					$errorMsg = "С данным типом LightMetaProperty не описана работа: '{$propertyType}'";
 					throw new UnimplementedFeatureException($errorMsg);
 			}
 			Assert::isUnreachable();

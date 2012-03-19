@@ -61,12 +61,6 @@
 		{
 			parent::prepairFormTakeImport($subject, $form, $request);
 
-			$proto = $subject->proto();
-			/* @var $proto AbstractProtoClass */
-			if ($proto instanceof IExtendedValidatable) {
-				$proto->validate($form);
-			}
-
 			return $this;
 		}
 
