@@ -1,9 +1,7 @@
-<?php
-if ($this->get('isAjax')) {
+<? if ($this->get('isAjax')) {
 	$dialogName = $this->get('linker')->getDialogName($infoObject);
 	$title = get_class($infoObject).': ';
-	$title .= $this->get('nameConverter')->get($infoObject);
-	?>
+	$title .= $this->get('nameConverter')->get($infoObject); ?>
 	<script type="text/javascript">
 		$(function() {
 			var windowHeight = (window.innerHeight - 200);
@@ -77,5 +75,8 @@ if ($this->get('isAjax')) {
 			}
 		});
 	</script>
-	<?php
-}
+<? } else { ?>
+	<? foreach ($buttonUrlList as $buttonName => $buttonOptions) { ?>
+		<a href="<?=$buttonOptions['url']?>" class="js-pjax"><?=$this->escape($buttonName)?></a>
+	<? } ?>
+<? } ?>

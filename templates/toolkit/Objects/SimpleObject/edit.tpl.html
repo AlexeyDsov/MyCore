@@ -1,19 +1,19 @@
-<?php
+<? /* @var $infoUrl string */
 $partViewer->view('header');
 
-$formId = 'editForm'.time().rand(10000, 99999);
-?>
-<form id="<?=$formId?>" method="post" action="<?=$takeUrl?>">
+$formId = 'editForm'.time().rand(10000, 99999); ?>
+<form id="<?=$formId?>" method="post" action="<?=$takeUrl?>" class="js-pjax">
 	<? $this->template('Objects/SimpleObject/edit.table', array('formId' => $formId)); ?>
+	<? if (!$this->get('isAjax') && $infoObject) { ?>
+		<input type="submit" value="Save" />
+	<? } ?>
 </form>
-<?php
-if ($this->get('isAjax') && $infoObject) {
+<? if ($this->get('isAjax') && $infoObject) {
 	$dialogName = $this->get('linker')->getDialogName($infoObject);
 	$title = get_class($infoObject).' id: '.$infoObject->getId();
 	if ($infoObject instanceof NamedObject) {
 		$title .= ", name: {$infoObject->getName()}";
-	}
-	?>
+	} ?>
 	<script type="text/javascript">
 		$('#<?=$dialogName?>').dialog('option', {
 			title: "Editing <?=$title?>",
@@ -33,7 +33,8 @@ if ($this->get('isAjax') && $infoObject) {
 			}
 		});
 	</script>
-	<?php
-}
-$partViewer->view('footer');
-?>
+<? } elseif ($infoObject) { ?>
+	<a href="<?=$infoUrl?>" class="js-pjax">Cancel</a>
+<? } ?>
+
+<? $partViewer->view('footer'); ?>
