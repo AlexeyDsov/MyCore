@@ -13,5 +13,8 @@ Drop object?
 			}
 		});
 	</script>
+<? } elseif ($infoObject) { ?>
+	<a href="<?=$dropUrl?>" class="js-pjax">Drop</a>
+	<a href="<?=$infoUrl?>" class="js-pjax">Cancel</a>
 <? } ?>
 <? $partViewer->view('footer'); ?>

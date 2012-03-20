@@ -170,7 +170,8 @@
 			if (!$confirmed) {
 				$this->model->
 					set('infoObject', $subject)->
-					set('dropUrl', $this->getUrlDrop($subject, true));
+					set('dropUrl', $this->getUrlDrop($subject, true))->
+					set('infoUrl', $this->getUrlInfo($subject));
 				return $this->getMav('drop.confirm');
 			}
 			
