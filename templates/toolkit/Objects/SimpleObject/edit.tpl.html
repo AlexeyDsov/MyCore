@@ -19,17 +19,11 @@ $formId = 'editForm'.time().rand(10000, 99999); ?>
 			title: "Editing <?=$title?>",
 			buttons: {
 				Save: function() {$.sendPostForm($('#<?=$formId?>'), $('#<?=$dialogName?>'));},
-				<?php
-				if ($form->getValue('id') && !$closeDialog) {
-					?>
+				<? if ($form->getValue('id') && !$closeDialog) { ?>
 					Cancel: function() {DialogController.spawnByUrl('<?=$infoUrl?>', '<?=$dialogName?>');}
-					<?php
-				} else {
-				?>
+					<? } else { ?>
 					Cancel: function() {$(this).dialog('close');}
-				<?php
-				}
-				?>
+				<? } ?>
 			}
 		});
 	</script>
