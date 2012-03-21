@@ -453,6 +453,18 @@
 			return 'drop';
 		}
 
+		protected function prepairData(HttpRequest $request, ModelAndView $mav) {
+			$mav = parent::prepairData($request, $mav);
+			if ($currentMenu = $this->getCurrentMenu($request, $mav)) {
+				$mav->getModel()->set('currentMenu', $currentMenu);
+			}
+			return $mav;
+		}
+		
+		protected function getCurrentMenu(HttpRequest $request, ModelAndView $mav) {
+			return '';
+		}
+
 		/**
 		 * Возвращает анонимную функцию для сортировки ассоциативной массива в необходимом порядке
 		 * @return
