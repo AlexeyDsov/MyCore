@@ -83,6 +83,7 @@
 		public function getUrl($object, $urlParams = array(), $method = null)
 		{
 			$method = $method ?: (isset($urlParams['action']) ? $urlParams['action'] : 'info');
+			$urlParams['action'] = isset($urlParams['action']) ? $urlParams['action'] : $method;
 			Assert::isTrue(
 				$this->isObjectSupported($object, $method),
 				'not supported action: '.$this->getObjectName($object).'.'.$method

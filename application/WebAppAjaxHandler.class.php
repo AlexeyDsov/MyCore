@@ -32,12 +32,15 @@
 			/* @var $chain WebApplication */
 			$isPjaxRequest = $this->isPjaxRequest($chain->getRequest());
 			$isAjaxRequest = !$isPjaxRequest && $this->isAjaxRequest($chain->getRequest());
+			$isIATRequest = $this->isIATRequest($chain->getRequest());
 
 			$chain->setVar('isPjax', $isPjaxRequest);
 			$chain->setVar('isAjax', $isAjaxRequest);
+			$chain->setVar('isIAT', $isIATRequest);
 			$chain->getServiceLocator()->
 				set('isPjax', $isPjaxRequest)->
-				set('isAjax', $isAjaxRequest);
+				set('isAjax', $isAjaxRequest)->
+				set('isIAT', $isIATRequest);
 
 			$chain->next();
 
@@ -47,7 +50,7 @@
 		/**
 		 * @return boolean
 		 */
-		public function isAjaxRequest(HttpRequest $request)
+		private function isAjaxRequest(HttpRequest $request)
 		{
 			$form = Form::create()->
 				add(
@@ -55,10 +58,10 @@
 						setList(self::$ajaxRequestValueList)
 				)->
 				add(
-					Primitive::boolean('isAjax')
+					Primitive::boolean('_isAjax')
 				)->
 				import($request->getServer())->
-				importOneMore('isAjax', $request->getGet());
+				importOneMore('_isAjax', $request->getGet());
 
 			if ($form->getErrors()) {
 				return false;
@@ -66,7 +69,7 @@
 			if ($form->getValue(self::$ajaxRequestVar)) {
 				return true;
 			}
-			if ($form->getValue('isAjax')) {
+			if ($form->getValue('_isAjax')) {
 				return true;
 			}
 			return false;
@@ -75,22 +78,39 @@
 		/**
 		 * @return boolean
 		 */
-		public function isPjaxRequest(HttpRequest $request)
+		private function isPjaxRequest(HttpRequest $request)
 		{
 			$form = Form::create()->
 				add(
 					Primitive::boolean(self::$pjaxRequestVar)
 				)->
 				add(
-					Primitive::boolean('isPjax')
+					Primitive::boolean('_isPjax')
 				)->
 				import($request->getServer())->
-				importOneMore('isPjax', $request->getGet());
+				importOneMore('_isPjax', $request->getGet());
 
 			if ($form->getErrors()) {
 				return false;
 			}
-			return $form->getValue(self::$pjaxRequestVar) || $form->getValue('isPjax');
+			return $form->getValue(self::$pjaxRequestVar) || $form->getValue('_isPjax');
+		}
+
+		/**
+		 * @return boolean
+		 */
+		private function isIATRequest(HttpRequest $request)
+		{
+			$form = Form::create()->
+				add(
+					Primitive::boolean('_isIAT')
+				)->
+				import($request->getGet());
+
+			if ($form->getErrors()) {
+				return false;
+			}
+			return $form->getValue('_isIAT');
 		}
 	}
 ?>

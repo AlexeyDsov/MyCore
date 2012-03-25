@@ -40,12 +40,14 @@
 		{
 			$isPjax = $chain->hasVar('isPjax') ? $chain->getVar('isPjax') : false;
 			$isAjax = $chain->hasVar('isAjax') ? $chain->getVar('isAjax') : false;
+			$isIAT = $chain->hasVar('isIAT') ? $chain->getVar('isIAT') : false;
 			
 			$resolver = MultiPrefixPhpViewResolverParametrized::create()->
 				addFirstPrefix($chain->getPathTemplate())->
 				setViewClassName('SimplePhpViewParametrizedToolkit')->
 				set('isPjax', $isPjax)->
 				set('isAjax', $isAjax)->
+				set('isIAT', $isIAT)->
 				set('serviceLocator', $chain->getServiceLocator())->
 				set('linker', $chain->getServiceLocator()->get('linker'))->
 				set('permissionManager', $chain->getServiceLocator()->get('permissionManager'))->

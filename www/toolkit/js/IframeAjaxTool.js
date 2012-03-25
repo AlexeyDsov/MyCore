@@ -1,6 +1,7 @@
 /**
  * Iframe Ajax Tool
  * @todo refactoring
+ * @author unknown
 **/
 var IAT = {
     submit: function(form, options)
