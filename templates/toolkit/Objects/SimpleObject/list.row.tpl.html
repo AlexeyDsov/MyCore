@@ -18,7 +18,7 @@
 		}
 	} ?>
 	<td>
-		<? if (isset($showInfo) && $showInfo) {
+		<? if (isset($showInfo) && $showInfo && $this->get('linker')->isObjectSupported($infoObject, 'info')) {
 			$objectDialogUrl = $this->get('linker')->getUrl($infoObject);
 			$objectDialogName = $this->get('linker')->getDialogName($infoObject);
 			?>

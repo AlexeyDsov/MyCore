@@ -34,9 +34,7 @@
 		}
 		
 		public function hasPermissionToClass(IPermissionUser $user, $method, $object) {
-			$action = $this->getObjectName($object).'.'.$method;
-			$actionList = $user->getActionList();
-			return array_search($action, $actionList) !== false;
+			return $user->hasAction($this->getObjectName($object).'.'.$method);
 		}
 		
 		/**

@@ -20,4 +20,9 @@
 		 * @return array
 		 */
 		public function getActionList();
+		
+		/**
+		 * @return boolean 
+		 */
+		public function hasAction($actionName);
 	}
