@@ -35,7 +35,7 @@
 			$showAddButton = $this->serviceLocator->get('linker')->isObjectSupported($this->getObjectName(), 'add');
 			$this->model->set('showAddButton', $showAddButton);
 			if ($showAddButton) {
-				$addUrl = $this->serviceLocator->get('linker')->getUrl($className, array('action' => 'edit'), 'edit');
+				$addUrl = $this->serviceLocator->get('linker')->getUrl($className, array('action' => 'edit'), 'add');
 				$this->model->set('addButtonUrl', $addUrl);
 				$this->model->set('addButtonDialogId', $className);
 			}
