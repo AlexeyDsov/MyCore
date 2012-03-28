@@ -113,6 +113,14 @@
 				->addProjection(Projection::property('id', 'id'))
 				->setDistinct(true);
 			
+			foreach ($idCriteria->getOrder()->getList() as $order) {
+				/* @var $order OrderBy */
+				$field = $order->getField();
+				if ($field != 'id') {
+					$idCriteria->addProjection(Projection::property($field));
+				}
+			}
+			
 			$idList = ArrayUtils::columnFromSet('id', $idCriteria->getCustomList());
 			$objectList = $criteria->getDao()->getListByIds($idList);
 			
