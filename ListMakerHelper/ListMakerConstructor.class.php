@@ -107,7 +107,32 @@
 
 			$this->fillCriteria($criteria, $form);
 
-			return $criteria->getResult();
+//only uniques varianty
+			$idCriteria = clone $criteria;
+			$idCriteria
+				->addProjection(Projection::property('id', 'id'))
+				->setDistinct(true);
+			
+			$idList = ArrayUtils::columnFromSet('id', $idCriteria->getCustomList());
+			$objectList = $criteria->getDao()->getListByIds($idList);
+			
+			$countCriteria = clone $criteria;
+			$totalCount = $countCriteria
+				->dropProjection()
+				->dropOrder()
+				->setLimit(1)
+				->setOffset(0)
+				->addProjection(Projection::distinctCount('id', 'count'))
+				->getCustom('count');
+			
+			return QueryResult::create()
+				->setQuery($criteria->toSelectQuery())
+				->setCount($totalCount)
+				->setList($objectList)
+				;
+			
+//			old normal variant with not uniques objects:
+//			return $criteria->getResult();
 		}
 
 		/**
