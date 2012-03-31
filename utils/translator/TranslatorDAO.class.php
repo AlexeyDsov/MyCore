@@ -10,25 +10,38 @@
  *                                                                         *
  ***************************************************************************/
 
-define('PATH_CORE', dirname(__FILE__).DS);
-
-ini_set(
-	'include_path',
-	get_include_path()
-	. join(
-		PATH_SEPARATOR,
-		array(
-			PATH_CORE.'EntityProto',
-			PATH_CORE.'ListMakerHelper',
-			PATH_CORE.'access',
-			PATH_CORE.'application',
-			PATH_CORE.'serviceLocator',
-			PATH_CORE.'flow',
-			PATH_CORE.'utils',
-			PATH_CORE.'utils/translator',
-		)
-	)
-	. PATH_SEPARATOR
-);
-
+	class TranslatorDAO implements ITranslator
+	{
+		/**
+		 * @var IPhraseContainerDao
+		 */
+		private $dao = null;
+		
+		/**
+		 * @return TranslatorDAO
+		 */
+		public static function create() {
+			return new self;
+		}
+		
+		/**
+		 * @param IPhraseContainerDao $dao
+		 * @return TranslatorDAO 
+		 */
+		public function setClassName(IPhraseContainerDAO $dao) {
+			$this->dao = $dao;
+			return $this;
+		}
+		
+		public function trans($phraseName) {
+			$translate = $this->dao->translate($phraseName);
+			return ($translate !== null)
+				? $translate
+				: $this->proccessNoTranslation($phraseName);
+		}
+		
+		protected function proccessNoTranslation($phraseName) {
+			return $phraseName;
+		}
+	}
 ?>

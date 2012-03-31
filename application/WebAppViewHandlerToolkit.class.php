@@ -50,6 +50,7 @@
 				set('isIAT', $isIAT)->
 				set('serviceLocator', $chain->getServiceLocator())->
 				set('linker', $chain->getServiceLocator()->get('linker'))->
+				set('translator', $chain->getServiceLocator()->get('translator'))->
 				set('permissionManager', $chain->getServiceLocator()->get('permissionManager'))->
 				set('nameConverter', $chain->getServiceLocator()->spawn($this->getNameConverterClass()));
 			
