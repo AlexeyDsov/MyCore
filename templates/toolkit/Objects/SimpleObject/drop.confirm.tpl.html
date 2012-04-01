@@ -1,20 +1,18 @@
 <? $partViewer->view('header'); ?>
-Drop object?
-<?php
-	$dialogName = $this->get('linker')->getDialogName($infoObject);
-?>	
+<?=$this->trans('Drop object?')?>
+<? $dialogName = $this->get('linker')->getDialogName($infoObject); ?>	
 <? if ($this->get('isAjax') && $infoObject) { ?>
 	<script type="text/javascript">
 		$('#<?=$dialogName?>').dialog('option', {
-			title: "Dropping object",
+			title: "<?=$this->trans('Dropping object')?>",
 			buttons: {
-				Drop: function() {DialogController.spawnByUrl('<?=$dropUrl?>', '<?=$dialogName?>');},
-				Cancel: function() {$(this).dialog('close');}
+				"<?=$this->trans('Drop')?>": function() {DialogController.spawnByUrl('<?=$dropUrl?>', '<?=$dialogName?>');},
+				"<?=$this->trans('Cancel')?>": function() {$(this).dialog('close');}
 			}
 		});
 	</script>
 <? } elseif ($infoObject) { ?>
-	<a href="<?=$dropUrl?>" class="js-pjax">Drop</a>
-	<a href="<?=$infoUrl?>" class="js-pjax">Cancel</a>
+	<a href="<?=$dropUrl?>" class="js-pjax"><?=$this->trans('Drop')?></a>
+	<a href="<?=$infoUrl?>" class="js-pjax"><?=$this->trans('Cancel')?></a>
 <? } ?>
 <? $partViewer->view('footer'); ?>

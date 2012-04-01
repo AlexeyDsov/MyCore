@@ -20,7 +20,7 @@ if ($this->get('isAjax') && $infoObject) {
 	<?php
 } else {
 	?>
-	<h1>Wrong page</h1>
+	<h1><?=$this->trans('Wrong page')?></h1>
 	<?php
 }
 $partViewer->view('footer');

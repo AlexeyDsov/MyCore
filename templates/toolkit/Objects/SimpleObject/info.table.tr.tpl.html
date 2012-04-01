@@ -7,7 +7,7 @@ $getter = $property->getGetter();
 $object = $infoObject->{$getter}();
 ?>
 <tr>
-	<td><?=$property->getName()?>:</td>
+	<td><?=$this->trans($objectName.'.property.'.$property->getName())?>:</td>
 	<td>
 		<?php
 		if ($propertyName == 'id') {
@@ -17,21 +17,21 @@ $object = $infoObject->{$getter}();
 		} elseif ($propertyType == 'enumeration') {
 			print $object
 				? $this->escape("{$object->getId()} ({$object->getName()})")
-				: 'Not exists';
+				: $this->trans('Not exists');
 		} elseif ($propertyType == 'identifierList') {
 			print "&nbsp;";
 		} elseif ($propertyType == 'boolean') {
 			if ($object === null) {
-				print "Not setted";
+				print $this->trans("Not setted");
 			} elseif ($object === false) {
-				print 'No';
+				print $this->trans('No');
 			} else {
-				print 'Yes';
+				print $this->trans('Yes');
 			}
 		} else {
 			$object = $infoObject->{$getter}();
 			if ($object === null) {
-				print "not setted\n";
+				print $this->trans("Not setted");
 			} elseif ($object instanceof Date) {
 				print $object->toString();
 			} elseif ($object instanceof TimestampTZ) {
@@ -41,7 +41,7 @@ $object = $infoObject->{$getter}();
 			} elseif (is_scalar($object)) {
 				print $this->escape($object);
 			} else {
-				print "not readable format of object";
+				print $this->trans("not readable format of object");
 			}
 		}
 		?>

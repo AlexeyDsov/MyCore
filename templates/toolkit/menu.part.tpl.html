@@ -11,7 +11,7 @@ if (!empty($menuList)) {
 			if ($isCurrent && isset($menu->submenu)) {
 				$subMenuList = $menu->submenu;
 			}
-			$title = isset($menu->title) ? $menu->title : $menu->name;
+			$title = $this->trans(isset($menu->title) ? $menu->title : $menu->name);
 			?>
 			<div class="adminMenuPart <?=$isCurrent ? 'active' : ''?>">
 				<a href="<?=$menu->url?>" title="<?=$title?>" class="js-pjax"><?=$title?></a>

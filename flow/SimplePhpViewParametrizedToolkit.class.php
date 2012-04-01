@@ -1,6 +1,15 @@
 <?php
 	class SimplePhpViewParametrizedToolkit extends SimplePhpViewParametrized
 	{
+		protected function trans($phraseName)
+		{
+			return $this->escape(
+				$this->has('translator')
+					? $this->get('translator')->trans($phraseName)
+					: $phraseName
+			);
+		}
+		
 		protected function objectLink($object)
 		{
 			$this->view('Objects/SimpleObject/objectLink', array('object' => $object));

@@ -5,30 +5,28 @@ $formId = 'editForm'.time().rand(10000, 99999); ?>
 <form id="<?=$formId?>" method="post" action="<?=$takeUrl?>" class="js-pjax">
 	<? $this->template('Objects/SimpleObject/edit.table', array('formId' => $formId)); ?>
 	<? if (!$this->get('isAjax') && $infoObject) { ?>
-		<input type="submit" value="Save" />
+		<input type="submit" value="<?=$this->trans('Save')?>" />
 	<? } ?>
 </form>
 <? if ($this->get('isAjax') && $infoObject) {
 	$dialogName = $this->get('linker')->getDialogName($infoObject);
-	$title = get_class($infoObject).' id: '.$infoObject->getId();
-	if ($infoObject instanceof NamedObject) {
-		$title .= ", name: {$infoObject->getName()}";
-	} ?>
+	$title = $this->trans(get_class($infoObjectPrototype)).' '
+		.$this->escape($this->get('nameConverter')->get($infoObject)); ?>
 	<script type="text/javascript">
 		$('#<?=$dialogName?>').dialog('option', {
-			title: "Editing <?=$title?>",
+			title: "<?=$this->trans('Editing')?> <?=$title?>",
 			buttons: {
-				Save: function() {$.sendPostForm($('#<?=$formId?>'), $('#<?=$dialogName?>'));},
+				"<?=$this->trans('Save')?>": function() {$.sendPostForm($('#<?=$formId?>'), $('#<?=$dialogName?>'));},
 				<? if ($form->getValue('id') && !$closeDialog) { ?>
-					Cancel: function() {DialogController.spawnByUrl('<?=$infoUrl?>', '<?=$dialogName?>');}
+					"<?=$this->trans('Cancel')?>": function() {DialogController.spawnByUrl('<?=$infoUrl?>', '<?=$dialogName?>');}
 					<? } else { ?>
-					Cancel: function() {$(this).dialog('close');}
+					"<?=$this->trans('Cancel')?>": function() {$(this).dialog('close');}
 				<? } ?>
 			}
 		});
 	</script>
 <? } elseif ($infoObject) { ?>
-	<a href="<?=$infoUrl?>" class="js-pjax">Cancel</a>
+	<a href="<?=$infoUrl?>" class="js-pjax"><?=$this->trans('Cancel')?></a>
 <? } ?>
 
 <? $partViewer->view('footer'); ?>

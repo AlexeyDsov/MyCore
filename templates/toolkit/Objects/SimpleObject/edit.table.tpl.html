@@ -11,6 +11,7 @@ $primitiveList = $orderFunction($form->getPrimitiveList());
 	foreach ($primitiveList as $propertyName => $primitive) {
 		/* @var $primitive BasePrimitive */
 		$fieldModel = Model::create()
+			->set('objectName', get_class($infoObjectPrototype))
 			->set('form', $form)
 			->set('formId', $formId)
 			->set('propertyList', $proto->getPropertyList())

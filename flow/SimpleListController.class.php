@@ -137,7 +137,8 @@
 				set('propertyList', $propertyList)->
 				set('proto', $this->getProto())->
 				set('urlParams', $this->getUrlParams())->
-				set('hideFilters', false);
+				set('hideFilters', false)->
+				set('objectName', $this->getObjectName());
 		}
 
 		/**
@@ -174,7 +175,8 @@
 				set('propertyList', $propertyList)->
 				set('baseUrl', PATH_WEB_URL)->
 				set('urlParams', $this->getUrlParams() + $columnParams)->
-				set('formData', $form->export());
+				set('formData', $form->export())->
+				set('objectName', $this->getObjectName());
 		}
 
 		/**

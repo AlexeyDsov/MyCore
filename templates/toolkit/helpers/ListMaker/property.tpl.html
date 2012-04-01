@@ -1,12 +1,13 @@
 <?php
 /* @var $form Form */
 /* @var $hideFilters bool */
+/* @var $objectName string */
 $options = $propertyList[$propertyName];
 $propertyData = $form->exportValue($propertyName);
 
 $description = isset($options[ListMakerProperties::OPTION_DESCRIPTION])
 	? $options[ListMakerProperties::OPTION_DESCRIPTION]
-	: $propertyName;
+	: $this->trans($objectName.'.property.'.$propertyName);
 ?>
 <div class="_propertyBlock <?=$form->hasError($propertyName) ? 'error' : ''?>">
 	<label style="float: left;"><?=$description?>:</label>

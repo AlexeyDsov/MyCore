@@ -3,7 +3,9 @@ $partViewer->view('header');
 
 $partViewer->view('helpers/ListMaker/form', $listHeaderModel);
 if ($showAddButton) {?>
-	<a href="<?=$addButtonUrl?>" onclick="return DialogController.spawnByLink(event, this, '<?=$addButtonDialogId?>');">Create new</a>
+	<a href="<?=$addButtonUrl?>" onclick="return DialogController.spawnByLink(event, this, '<?=$addButtonDialogId?>');">
+		<?=$this->trans('Create new object')?>
+	</a>
 <? }
 /* @var $queryResult QueryResult */
 if (isset($queryResult)) {
@@ -25,7 +27,7 @@ if (isset($queryResult)) {
 		<?
 		$partViewer->view('helpers/Pager/offset', $pagerModel);
 	} else { ?>
-		<div>Не найдено ни одного элемента</div>
+		<div><?=$this->trans('No elements was found')?></div>
 	<? }
 }
 $partViewer->view('footer');

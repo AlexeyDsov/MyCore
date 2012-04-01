@@ -4,6 +4,7 @@
 /* @var $baseUrl string */
 /* @var $urlParams array */
 /* @var $formData array */
+/* @var $objectName string */
 Assert::isTrue(isset($propertyName));
 Assert::isTrue(isset($propertyList) && is_array($propertyList));
 Assert::isTrue(isset($baseUrl) && is_string($baseUrl));
@@ -12,7 +13,7 @@ Assert::isTrue(isset($formData) && is_array($formData));
 
 $description = isset($propertyList[$propertyName][ListMakerProperties::OPTION_DESCRIPTION])
 	? $propertyList[$propertyName][ListMakerProperties::OPTION_DESCRIPTION]
-	: $propertyName;
+	: $this->trans($objectName.'.property.'.$propertyName);
 
 if (isset($propertyList[$propertyName][ListMakerProperties::OPTION_ORDERING])) {
 	$orderType = $propertyList[$propertyName][ListMakerProperties::OPTION_ORDERING];

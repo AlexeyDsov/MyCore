@@ -20,13 +20,13 @@ if (!$this->get('isAjax')) {
 	?>
 					<div class="loginWindow">
 					<? if ($user = $adminAuth->getUser()) { ?>
-						You logged as: <?=$user->getName()?> /
-						<a href="<?=PATH_WEB_URL?>area=Login&action=unlogin">Unlogin</a>
+						<?=$this->trans('You logged as')?>: <?=$user->getName()?> /
+						<a href="<?=PATH_WEB_URL?>area=Login&action=unlogin"><?=$this->trans('Unlogin')?></a>
 					<? } else { ?>
-						<a href="<?=PATH_WEB_URL?>area=Login">Login</a>
+						<a href="<?=PATH_WEB_URL?>area=Login"><?=$this->trans('Login')?></a>
 					<? } ?>
 					</div>
-					<center><h1>Toolkit</h1></center>
+					<center><h1><?=$this->trans('ToolkitName')?></h1></center>
 					<div style="clear: both;"><!-- --></div>
 					<? if ($admin = $adminAuth->getUser()) {
 						$partViewer->view('menu.main');

@@ -1,12 +1,12 @@
 <? if ($this->get('isAjax')) {
 	$dialogName = $this->get('linker')->getDialogName($infoObject);
-	$title = get_class($infoObject).': ';
-	$title .= $this->get('nameConverter')->get($infoObject); ?>
+	$title = $this->trans(get_class($infoObject)).': ';
+	$title .= $this->escape($this->get('nameConverter')->get($infoObject)); ?>
 	<script type="text/javascript">
 		$(function() {
 			var windowHeight = (window.innerHeight - 200);
 			$('#<?=$dialogName?>').dialog('option', {
-				title: "Info of <?=$this->escape($title)?>",
+				title: "<?=$this->trans('Info of')?> <?=$title?>",
 				width: 600,
 				height: windowHeight,
 				buttons: {
@@ -19,11 +19,11 @@
 					foreach ($buttonUrlList as $buttonName => $buttonOptions) {
 						$isLast = ($i++ >= $count - 1);
 						if ($buttonOptions['window']) { ?>
-							"<?=$this->escape($buttonName)?>": function() {
+							"<?=$this->trans($buttonName)?>": function() {
 								DialogController.spawnByUrl('<?=$buttonOptions['url']?>', '<?=isset($buttonOptions['dialogName']) ? $buttonOptions['dialogName'] : $dialogName?>');
 							}<?=!$isLast ? ',' : ''?>
 						<? } else { ?>
-							"<?=$this->escape($buttonName)?>": function() {
+							"<?=$this->trans($buttonName)?>": function() {
 								Application.goUrl('<?=$buttonOptions['url']?>')
 							}<?=!$isLast ? ',' : ''?>
 						<? }
@@ -77,6 +77,6 @@
 	</script>
 <? } else { ?>
 	<? foreach ($buttonUrlList as $buttonName => $buttonOptions) { ?>
-		<a href="<?=$buttonOptions['url']?>" class="js-pjax"><?=$this->escape($buttonName)?></a>
+		<a href="<?=$buttonOptions['url']?>" class="js-pjax"><?=$this->trans($buttonName)?></a>
 	<? } ?>
 <? } ?>

@@ -10,7 +10,8 @@ $primitiveValue = $primitive->getValue();
 ?>
 <tr class="<?=$hasError ? 'errorField' : ''?>">
 	<td>
-		<?=$propertyName?><?=$primitive->isRequired() ? '*' : ''?>:
+		<?=$this->trans($objectName.'.property.'.$propertyName)?>
+		<?=$primitive->isRequired() ? '*' : ''?>:
 	</td>
 	<td>
 		<?php
@@ -100,7 +101,7 @@ $primitiveValue = $primitive->getValue();
 			<?php
 		} elseif (in_array($primitiveType, array('PrimitiveIdentifierList', 'PrimitiveEnumerationList'))) {
 			?>
-			Unsupported type: <?=$primitiveType?>
+			<?=$this->trans('Unsupported type')?>: <?=$primitiveType?>
 			<?php
 		} else {
 			throw new WrongStateException('Undefined primitive type: '.$primitiveType);
