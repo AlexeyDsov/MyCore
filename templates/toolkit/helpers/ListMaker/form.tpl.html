@@ -28,15 +28,15 @@ if (!isset($postfix)) {
 		}
 	}
 	?>
-	<input type="button" value="Hide" name="_hider" onclick="return Application.switchFilters(this, $('#listForm<?=$postfix?>')); return false;" />
+	<input type="button" class="_hider" value="<?=$this->trans('list.filter.Hide')?>" onclick="return Application.hideFilters(this, $('#listForm<?=$postfix?>')); return false;" />
+	<input type="button" class="_shower" value="<?=$this->trans('list.filter.Show')?>" onclick="return Application.showFilters(this, $('#listForm<?=$postfix?>')); return false;" style="display: none;" />
 	
 	<? if ($hideFilters) { ?>
 		<script>
-			$(document).ready(
-				function(){
-				$('#listForm<?=$postfix?>').find('[name=_hider]').click();
+			$(document).ready(function(){
+				$('#listForm<?=$postfix?>').find('._hider').click();
 			});
 		</script>
 	<? } ?>
-	<input type="submit" value="Search"/>
+	<input type="submit" value="<?=$this->trans('list.filter.Search')?>"/>
 </form>

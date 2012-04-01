@@ -8,15 +8,6 @@ var Application = Application || {};
 Application.ternaryRadio = null;
 Application.emptyInputPattern = ':text[value=\'\'],:checkbox[checked=false],:radio[checked=false]';
 
-
-Application.switchFilters = function(button, form) {
-	if ($(button).val() == 'Hide') {
-		Application.hideFilters(button, form);
-	} else {
-		Application.showFilters(button, form);
-	}
-}
-
 Application.hideFilters = function(button, form) {
 	var filter = function() {
 		if ($(this).hasClass('error')) {
@@ -39,13 +30,13 @@ Application.hideFilters = function(button, form) {
 		.find('div._propertyBlock')
 		.filter(filter)
 		.hide();
-	
-	$(button).val('Show');
+		
+	$(button).hide().next().show();
 }
 
 Application.showFilters = function(button, form) {
 	$(form).find('div._filterBlock,div._propertyBlock').show();
-	$(button).val('Hide');
+	$(button).hide().prev().show();
 }
 
 Application.submit = function(form) {
